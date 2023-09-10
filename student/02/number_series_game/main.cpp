@@ -15,8 +15,14 @@ int main()
     int i = 0;
     while (i < numbers) {
         ++i;
-        if (i % 3 == 0) {
+        if (i % 3 == 0 && i % 7 == 0) {
+            cout << "zip boing" <<endl;
+        }
+        else if (i % 3 == 0) {
             cout << "zip" <<endl;
+        }
+        else if (i % 7 == 0) {
+            cout << "boing" <<endl;
         }
         else {
         cout << i << endl;
