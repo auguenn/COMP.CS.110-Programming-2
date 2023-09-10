@@ -15,7 +15,13 @@ int main()
     int i = 0;
     while (i < numbers) {
         ++i;
-        cout << i <<endl;
+        if (i % 3 == 0) {
+            cout << "zip" <<endl;
+        }
+        else {
+        cout << i << endl;
+        }
+
     }
 
 
