@@ -12,7 +12,7 @@ unsigned long int factorial(unsigned long int n)
         }
 }
 
-unsigned long int count_possibility(unsigned long int& total, unsigned long int& drawn)
+unsigned long int count_possibility(long int& total, long int& drawn)
 {
     unsigned long int a = 1;
     unsigned long int b = 1;
@@ -30,11 +30,11 @@ unsigned long int count_possibility(unsigned long int& total, unsigned long int&
 
 int main()
 {
-    unsigned long int total = 0;
+    long int total = 0;
     cout << "Enter the total number of lottery balls: ";
     cin >> total;
 
-    unsigned long int drawn = 0;
+    long int drawn = 0;
     cout << "Enter the number of drawn balls: ";
     cin >> drawn;
 
