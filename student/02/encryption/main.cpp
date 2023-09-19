@@ -3,7 +3,7 @@
 
 using namespace std;
 
-bool check_lenght(string& key)
+bool check_lenght(string key)
 {
     if (key.size() != 26) {
         return false;
@@ -13,7 +13,7 @@ bool check_lenght(string& key)
     }
 }
 
-bool is_lower(string& key)
+bool is_lower(string key)
 {
     int size = 26;
     for (int i = 0 ; i < size ; ++i) {
@@ -55,17 +55,18 @@ int main()
        string text_to_be_encrypted = "";
        cin >> text_to_be_encrypted;
 
-       if (!is_lower(text_to_be_encrypted)) {
-           cout << "Error! The text to be encrypted must contain only lower case characters." <<endl;
-           return EXIT_FAILURE;
-       }
 
        // encrypt the text
        string encrypted_text = "";
        for (char c : text_to_be_encrypted) {
-           encrypted_text += key.at(c-97);
+           if (islower(c)) {
+               encrypted_text += key.at(c - 'a');
+           } else {
+               // Käsittele virhetilanne, jos 'c' ei ole pieni kirjain
+               cout << "Error! The text to be encrypted must contain only lower case characters." << endl;
+               return EXIT_FAILURE;
+           }
        }
-
        // print the encrypted key
        cout << "Encrypted text: " << encrypted_text << endl;
        return EXIT_SUCCESS;
