@@ -13,8 +13,8 @@ public:
     void print() const;
     void set_credit_limit(int limit);
     void save_money(int amount);
-    void take_money(int amount);
-    void transfer_to(Account& acc,int sum);
+    bool take_money(int amount);
+    void transfer_to(Account& acc, int sum);
     int get_balance();
 
 private:
@@ -34,7 +34,7 @@ private:
     std::string owner_;
     bool has_credit_ = false;
     int balance_ = 0;
-    int credit_balance_ = 0;
+    int credit_limit_ = 0;
 };
 
 #endif // ACCOUNT_HH

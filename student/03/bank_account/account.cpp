@@ -5,6 +5,7 @@ Account::Account(const std::string& owner, bool has_credit):
     owner_(owner), has_credit_(has_credit)
 {
     generate_iban();
+
 }
 
 // Setting initial value for the static attribute running_number_
@@ -28,74 +29,59 @@ void Account::generate_iban()
     iban_.append(suffix);
 }
 
-void Account::print() const
-{
+void Account::print() const {
     std::cout << owner_ << " : " << iban_ << " : " << balance_ << " euros" << std::endl;
 }
 
-void Account::set_credit_limit(int amount)
-{
+void Account::save_money(int sum) {
+    balance_ += sum;
+}
 
-    if (this->has_credit_==false)
-    {
-        std::cout << "Cannot set credit limit: the account has no credit card" << std::endl;
-    }
-    else {
-        this->credit_balance_=amount;
-
+void Account::set_credit_limit(int sum) {
+    if (has_credit_) {
+        credit_limit_ = sum;
     }
 }
 
-void Account::save_money(int x)
-{
-    this->balance_=x;
-}
+bool Account::take_money(int sum) {
+    bool success = true;
 
-void Account::take_money(int amount)
-{
-    if (this->has_credit_==true) {
-        if (this->balance_+credit_balance_-amount<=0) {
+    if (has_credit_) {
+        if (sum >= credit_limit_ + balance_) {
             std::cout << "Cannot take money: credit limit overflow" << std::endl;
-
+            success = false;
+        } else if (balance_ <= sum and sum < credit_limit_) {
+            balance_ -= sum;
+            credit_limit_ += balance_;
+        } else {
+            balance_ -= sum;
         }
-        this->balance_-=amount;
-        std::cout << amount << " euros taken: " << "new balance of " << this->iban_ << " is " << this->balance_ << " euros" << std::endl;
-    }
-    else {
-        this->balance_-=amount;
-        if (this->balance_<0) {
-            std::cout<< "Cannot take money: balance underflow"<<std::endl;
-            this->balance_+=amount;
-        }
-        else {
-            std::cout << amount << " euros taken: " << "new balance of " << this->iban_ << " is " << this->balance_ << " euros" << std::endl;
-        }
-
-    }
-}
-
-void Account::transfer_to(Account &a1, int amount)
-{
-    if (this->has_credit_==true) {
-        if(this->balance_+credit_balance_-amount<=0){
-            std::cout << "Cannot take money: credit limit overflow" << std::endl;
-            std::cout << "Transfer from " << this->iban_ << " failed" << std::endl;
-        }
-        else {
-            this->balance_-= amount;
-            a1.balance_+= amount;
-            std::cout << amount << " euros taken: " << "new balance of " << this->iban_ << " is " << this->balance_ << " euros" << std::endl;
-        }
-    }
-    else {
-        if(this->balance_-amount<0) {
+    } else {
+        if (sum >= balance_) {
             std::cout << "Cannot take money: balance underflow" << std::endl;
-            std::cout << "Transfer from " << this->iban_ << " failed" << std::endl;
+            success = false;
+        } else {
+            balance_ -= sum;
+            success = true;
         }
-        else {
-            this->balance_-=amount;
-            a1.balance_+=amount;
-            std::cout << amount << " euros taken: " << "new balance of " << this->iban_ << " is " << this->balance_ << " euros" << std::endl;
-        }
+    }
+
+    if (success) {
+        std::cout << sum << " euros taken: new balance of " << iban_ << " is "  << balance_ << " euros" << std::endl;
+    }
+    return success;
+}
+
+int Account::get_balance() {
+    return balance_;
+}
+
+void Account::transfer_to(Account& acc, int sum) {
+    bool transfer_success = take_money(sum);
+    std::cout << transfer_success << std::endl;
+    if (transfer_success) {
+        acc.save_money(sum);
+    } else {
+        std::cout << "Transfer from " << iban_ << " failed" << std::endl;
     }
 }
