@@ -3,27 +3,34 @@
 #include "date.hh"
 #include <string>
 
-using namespace std;
-
 
 class Book
 {
 public:
-    Book(const string name,const string author);
-    // Destructor
-      ~Book();
-    void loan(Date& d);
-    void print();
-    void renew();
-    void give_back();
+    // Constructor
+       Book(const std::string& author, const std::string& title);
 
-private:
-    string name_;
-    string author_;
-    bool is_available_;
-    bool is_loan_;
-    Date loan_start_;
-    Date loan_end_;
+       // Destructor
+       ~Book();
+
+       // Print the information of the book
+       void print();
+
+       // Loan the book
+       void loan(Date& loan_date);
+
+       // Renew the book
+       void renew();
+
+       // Return the book
+       void give_back();
+
+   private:
+       const std::string author_;
+       const std::string title_;
+       bool available_;
+       Date loan_start_;
+       Date loan_end_;
 };
 
 #endif // BOOK_HH
