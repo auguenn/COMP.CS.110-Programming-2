@@ -91,19 +91,15 @@ bool GameBoard::validateCoordinates(const std::vector<std::string>& input) {
 }
 
 bool GameBoard::validateMove(int x1, int y1, int x2, int y2) {
-    // Tarkista, että lähtö- ja kohdepisteet ovat pelilaudalla
-    if (x1 < 1 || x1 > 8 || y1 < 1 || y1 > 8 || x2 < 1 || x2 > 8 || y2 < 1 || y2 > 8) {
-        std::cout << "Invalid start/destination point." << std::endl;
-        return false;
-    }
+
 
     // Tarkista, että lähtöpisteessä on nappula ja kohdepisteessä on tyhjä
-    if (board[x1 - 1][y1 - 1] != piece_ || board[x2 - 1][y2 - 1] != ' ') {
+    if (board[y1 - 1][x1 - 1] != piece_ || board[y2 - 1][x2 - 1] != ' ') {
         std::cout << "Cannot move from start point to destination point." << std::endl;
         return false;
     }
     // Tarkista, että siirto on viistoon
-    if (abs(x2 - x1) != 2 || abs(y2 - y1) != 2) {
+    if (std::abs(x2 - x1) != 2 || std::abs(y2 - y1) != 2) {
         std::cout << "Cannot move from start point to destination point." << std::endl;
         return false;
     }
@@ -111,7 +107,7 @@ bool GameBoard::validateMove(int x1, int y1, int x2, int y2) {
     int mid_x = (x1 + x2) / 2;
     int mid_y = (y1 + y2) / 2;
 
-    if (board[mid_x - 1][mid_y - 1] != piece_) {
+    if (board[mid_y - 1][mid_x - 1] != piece_) {
         std::cout << "Cannot move from start point to destination point." << std::endl;
         return false;
     }
@@ -126,6 +122,11 @@ void GameBoard::makeMove(int x1, int y1, int x2, int y2) {
     // Suorita siirto
     board[y2 - 1][x2 - 1] = piece_;
     board[y1 - 1][x1 - 1] = ' ';
+
+    int mid_x = (x1 + x2) / 2;
+    int mid_y = (y1 + y2) / 2;
+
+    board[mid_y - 1][mid_x - 1] = ' ';
 
     print(); // Tulosta uusi pelitilanne
 }
