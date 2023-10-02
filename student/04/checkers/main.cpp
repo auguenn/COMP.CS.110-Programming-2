@@ -47,10 +47,6 @@ int main() {
             else {
                 std::vector<std::string> coords = split(input, separator);
 
-                if (coords.size() != 4) {
-                    std::cout << "Invalid start/destination point." << std::endl;
-                    continue;
-                }
                 if (!gameBoard.validateCoordinates(coords)) {
                     continue;
                 }
@@ -65,7 +61,7 @@ int main() {
                 }
 
 
-                //gameBoard.makeMove(x1, y1, x2, y2);
+                gameBoard.makeMove(x1, y1, x2, y2);
 
             }
         }

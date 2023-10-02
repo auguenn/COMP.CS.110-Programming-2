@@ -17,7 +17,7 @@ void GameBoard::initializeBoard() {
 
     for (unsigned int i = 0; i < SIZE; i++) {
         for (unsigned int j = 0; j < SIZE; j++) {
-            if ((i < 2 || i > 5) || (j < 2 || j > 5)) {
+            if ((j < 2 || j > 5) || (i < 2 || i > 5)) {
                 board[i][j] = piece_;
             }
             else {
@@ -69,7 +69,10 @@ bool GameBoard::validateCoordinates(const std::vector<std::string>& input) {
         return false;
     }
 
-    int x1, y1, x2, y2;
+    int x1 = 0;
+    int y1 = 0;
+    int x2 = 0;
+    int y2 = 0;
 
     // Yritä muuntaa syötteet luvuiksi
     if (!(std::istringstream(input[0]) >> x1) || !(std::istringstream(input[1]) >> y1) ||
@@ -118,12 +121,14 @@ bool GameBoard::validateMove(int x1, int y1, int x2, int y2) {
     return true;
 }
 
-//void GameBoard::makeMove(int x1, int y1, int x2, int y2) {
-       // board[x2][y2] = piece;
-        //board[x1][y1] = ' ';
-        //board[(x1 + x2) / 2][(y1 + y2) / 2] = ' ';
-        //print();
-//}
+void GameBoard::makeMove(int x1, int y1, int x2, int y2) {
+
+    // Suorita siirto
+    board[y2 - 1][x2 - 1] = piece_;
+    board[y1 - 1][x1 - 1] = ' ';
+
+    print(); // Tulosta uusi pelitilanne
+}
 
 
 int GameBoard::getMoveCount() const {
