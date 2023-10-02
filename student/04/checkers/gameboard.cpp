@@ -1,6 +1,9 @@
 #include "gameboard.hh"
 #include <iostream>
 #include <vector>
+#include <string>
+#include <sstream>
+
 
 
 GameBoard::GameBoard(char piece) : piece(piece) {
@@ -58,8 +61,57 @@ void GameBoard::print_line(unsigned int length, char fill_character) const {
     std::cout << std::endl;
 }
 
-bool GameBoard::validateInput(std::vector<std::string>& input) {
+bool GameBoard::validateCoordinates(const std::vector<std::string>& input) {
 
-        std::cout<<input.size()<<std::endl;
-        return true;
+    // Tarkista, että syötteessä on 4 koordinaattia
+    if (input.size() != 4) {
+        std::cout << "Invalid start/destination point." << std::endl;
+        return false;
+    }
+
+    int x1, y1, x2, y2;
+
+    // Yritä muuntaa syötteet luvuiksi
+    if (!(std::istringstream(input[0]) >> x1) || !(std::istringstream(input[1]) >> y1) ||
+        !(std::istringstream(input[2]) >> x2) || !(std::istringstream(input[3]) >> y2)) {
+        std::cout << "Invalid start/destination point." << std::endl;
+        return false;
+    }
+
+    // Tarkista, että koordinaatit ovat pelilaudan sisällä (1-8)
+    if (x1 < 1 || x1 > 8|| y1 < 1 || y1 > 8|| x2 > 8|| y2 < 1 || y2 > 8) {
+        std::cout << "Invalid start/destination point." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool GameBoard::validateMove(int x1, int y1, int x2, int y2) {
+    // Tarkista, että lähtö- ja kohdepisteet ovat pelilaudalla
+    if (x1 < 1 || x1 > 8 || y1 < 1 || y1 > 8 || x2 < 1 || x2 > 8 || y2 < 1 || y2 > 8) {
+        std::cout << "Invalid start/destination point." << std::endl;
+        return false;
+    }
+
+    // Tarkista, että lähtöpisteessä on nappula ja kohdepisteessä on tyhjä
+    if (board[x1 - 1][y1 - 1] != piece || board[x2 - 1][y2 - 1] != ' ') {
+        std::cout << "Cannot move from start point to destination point." << std::endl;
+        return false;
+    }
+    // Tarkista, että siirto on viistoon
+    if (abs(x2 - x1) != 2 || abs(y2 - y1) != 2) {
+        std::cout << "Cannot move from start point to destination point." << std::endl;
+        return false;
+    }
+    // Tarkista, että lähtöpisteen ja kohdepisteen välissä on täsmälleen yksi nappula
+    int mid_x = (x1 + x2) / 2;
+    int mid_y = (y1 + y2) / 2;
+
+    if (board[mid_x - 1][mid_y - 1] != piece) {
+        std::cout << "Cannot move from start point to destination point." << std::endl;
+        return false;
+    }
+
+    return true;
 }

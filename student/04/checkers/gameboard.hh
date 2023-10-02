@@ -20,7 +20,8 @@ public:
     // Constructor: you can add parameters if needed
     GameBoard(char piece);
     void initializeBoard();
-    bool validateInput(std::vector<std::string>& input);
+    bool validateCoordinates(const std::vector<std::string>& input);
+    bool validateMove(int x1, int y1, int x2, int y2);
 
     // Tulostaa pelilaudan (kunhan olet viimeistellyt metodin).
     // Prints the gameboard (after you have finished the method).

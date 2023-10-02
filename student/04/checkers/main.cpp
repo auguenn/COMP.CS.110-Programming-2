@@ -36,15 +36,37 @@ int main() {
 
     std::string input = "";
     char separator = ' ';
-    std::cout << "Enter start point (x, y) and destination point (x, y), or q to quit: ";
-    getline(std::cin, input);
+    while (true) {
+        std::cout << "Enter start point (x, y) and "
+                "destination point (x, y), or q to quit: ";
+        getline(std::cin, input);
 
-    std::vector<std::string> coords = split(input, separator);
+            if (input == "q") {
+                break;
+            }
 
-    if (gameBoard.validateInput(coords)) {
-        std::cout<<coords.size()<<std::endl;
-        std::cout<<"jee"<<std::endl;
-    }
+            std::vector<std::string> coords = split(input, separator);
+
+            if (coords.size() != 4) {
+                std::cout << "Invalid start/destination point." << std::endl;
+                continue;
+            }
+            if (!gameBoard.validateCoordinates(coords)) {
+                continue;
+            }
+
+            int x1 = std::stoi(coords[0]);
+            int y1 = std::stoi(coords[1]);
+            int x2 = std::stoi(coords[2]);
+            int y2 = std::stoi(coords[3]);
+
+            if (!gameBoard.validateMove(x1, y1, x2, y2)) {
+                continue;
+            }
+
+            gameBoard.print();
+        }
+
 
     return EXIT_SUCCESS;
 }
