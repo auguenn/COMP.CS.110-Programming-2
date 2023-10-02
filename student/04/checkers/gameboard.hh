@@ -1,6 +1,7 @@
 #ifndef GAMEBOARD_HH
 #define GAMEBOARD_HH
 #include <vector>
+#include <string>
 
 // Pelilaudan koko
 // Size of the gameboard
@@ -19,6 +20,7 @@ public:
     // Constructor: you can add parameters if needed
     GameBoard(char piece);
     void initializeBoard();
+    bool validateInput(std::vector<std::string>& input);
 
     // Tulostaa pelilaudan (kunhan olet viimeistellyt metodin).
     // Prints the gameboard (after you have finished the method).

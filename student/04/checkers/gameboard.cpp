@@ -7,16 +7,18 @@ GameBoard::GameBoard(char piece) : piece(piece) {
     initializeBoard();
 }
 
+
+
 void GameBoard::initializeBoard() {
     board.resize(SIZE, std::vector<char>(SIZE, ' '));
 
     for (unsigned int i = 0; i < SIZE; i++) {
         for (unsigned int j = 0; j < SIZE; j++) {
-            if (j < 2 || j > 5) {
+            if ((i < 2 || i > 5) || (j < 2 || j > 5)) {
                 board[i][j] = piece;
             }
-            else if (i < 2 || i > 5) {
-                board[i][j] = piece;
+            else {
+                board[i][j] = ' ';
             }
         }
     }
@@ -54,4 +56,10 @@ void GameBoard::print_line(unsigned int length, char fill_character) const {
         std::cout << fill_character;
     }
     std::cout << std::endl;
+}
+
+bool GameBoard::validateInput(std::vector<std::string>& input) {
+
+        std::cout<<input.size()<<std::endl;
+        return true;
 }
