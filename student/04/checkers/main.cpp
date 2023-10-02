@@ -37,36 +37,41 @@ int main() {
     std::string input = "";
     char separator = ' ';
     while (true) {
-        std::cout << "Enter start point (x, y) and "
-                "destination point (x, y), or q to quit: ";
-        getline(std::cin, input);
+            std::cout << "Enter start point (x, y) and destination point (x, y),"
+                            " or q to quit: ";
+            getline(std::cin, input);
 
             if (input == "q") {
                 break;
             }
+            else {
+                std::vector<std::string> coords = split(input, separator);
 
-            std::vector<std::string> coords = split(input, separator);
+                if (coords.size() != 4) {
+                    std::cout << "Invalid start/destination point." << std::endl;
+                    continue;
+                }
+                if (!gameBoard.validateCoordinates(coords)) {
+                    continue;
+                }
 
-            if (coords.size() != 4) {
-                std::cout << "Invalid start/destination point." << std::endl;
-                continue;
+                int x1 = std::stoi(coords[0]);
+                int y1 = std::stoi(coords[1]);
+                int x2 = std::stoi(coords[2]);
+                int y2 = std::stoi(coords[3]);
+
+                if (!gameBoard.validateMove(x1, y1, x2, y2)) {
+                    continue;
+                }
+
+
+                //gameBoard.makeMove(x1, y1, x2, y2);
+
             }
-            if (!gameBoard.validateCoordinates(coords)) {
-                continue;
-            }
-
-            int x1 = std::stoi(coords[0]);
-            int y1 = std::stoi(coords[1]);
-            int x2 = std::stoi(coords[2]);
-            int y2 = std::stoi(coords[3]);
-
-            if (!gameBoard.validateMove(x1, y1, x2, y2)) {
-                continue;
-            }
-
-            gameBoard.print();
         }
-
-
+    int moves = gameBoard.getMoveCount();
+    int pieces = gameBoard.getPiecesLeft();
+    std::cout << moves << " move(s) made." << std::endl;
+    std::cout << pieces << " piece(s) left." << std::endl;
     return EXIT_SUCCESS;
 }

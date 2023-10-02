@@ -6,7 +6,7 @@
 
 
 
-GameBoard::GameBoard(char piece) : piece(piece) {
+GameBoard::GameBoard(char piece) : piece_(piece), moves_(0), pieces_left_(48) {
     initializeBoard();
 }
 
@@ -18,7 +18,7 @@ void GameBoard::initializeBoard() {
     for (unsigned int i = 0; i < SIZE; i++) {
         for (unsigned int j = 0; j < SIZE; j++) {
             if ((i < 2 || i > 5) || (j < 2 || j > 5)) {
-                board[i][j] = piece;
+                board[i][j] = piece_;
             }
             else {
                 board[i][j] = ' ';
@@ -95,7 +95,7 @@ bool GameBoard::validateMove(int x1, int y1, int x2, int y2) {
     }
 
     // Tarkista, että lähtöpisteessä on nappula ja kohdepisteessä on tyhjä
-    if (board[x1 - 1][y1 - 1] != piece || board[x2 - 1][y2 - 1] != ' ') {
+    if (board[x1 - 1][y1 - 1] != piece_ || board[x2 - 1][y2 - 1] != ' ') {
         std::cout << "Cannot move from start point to destination point." << std::endl;
         return false;
     }
@@ -108,10 +108,28 @@ bool GameBoard::validateMove(int x1, int y1, int x2, int y2) {
     int mid_x = (x1 + x2) / 2;
     int mid_y = (y1 + y2) / 2;
 
-    if (board[mid_x - 1][mid_y - 1] != piece) {
+    if (board[mid_x - 1][mid_y - 1] != piece_) {
         std::cout << "Cannot move from start point to destination point." << std::endl;
         return false;
     }
 
+    moves_ += 1;
+    pieces_left_ -= 1;
     return true;
+}
+
+//void GameBoard::makeMove(int x1, int y1, int x2, int y2) {
+       // board[x2][y2] = piece;
+        //board[x1][y1] = ' ';
+        //board[(x1 + x2) / 2][(y1 + y2) / 2] = ' ';
+        //print();
+//}
+
+
+int GameBoard::getMoveCount() const {
+    return moves_;
+}
+
+int GameBoard::getPiecesLeft() const {
+    return pieces_left_;
 }

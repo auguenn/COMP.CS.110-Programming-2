@@ -22,6 +22,9 @@ public:
     void initializeBoard();
     bool validateCoordinates(const std::vector<std::string>& input);
     bool validateMove(int x1, int y1, int x2, int y2);
+    void makeMove(int x1, int y1, int x2, int y2);
+    int getPiecesLeft() const;
+    int getMoveCount() const;
 
     // Tulostaa pelilaudan (kunhan olet viimeistellyt metodin).
     // Prints the gameboard (after you have finished the method).
@@ -30,9 +33,11 @@ public:
 private:
     // Tulostaa annetun pituisen rivin annettua tulostumerkkiä.
     // Prints a line with the given length and fill character.
-    char piece = ' ';
+    char piece_;
     void print_line(unsigned int length, char fill_character) const;
     std::vector<std::vector<char>> board;
+    int moves_;
+    int pieces_left_;
 };
 
 #endif // GAMEBOARD_HH
