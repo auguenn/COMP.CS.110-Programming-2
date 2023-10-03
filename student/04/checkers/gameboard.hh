@@ -1,43 +1,82 @@
+/* Tammipeli (yhdelle pelaajalle)
+ *
+ *
+ * Ohjelman kirjoittaja
+ * Nimi: Enna Augustin
+ * Opiskelijanumero: 50235634
+ * Käyttäjätunnus: xxenau
+ * E-Mail: enna.augustin@tuni.fi
+ *
+ *
+ * */
+
+
 #ifndef GAMEBOARD_HH
 #define GAMEBOARD_HH
 #include <vector>
 #include <string>
 
 // Pelilaudan koko
-// Size of the gameboard
 const unsigned int SIZE = 8;
 
 // Vasemmanpuoleisimman sarakkeen koko, tarvitaan pelilaudan tulostamisessa
-// Width of the left-most column, needed in printing the gameboard
 const unsigned int LEFT_COLUMN_WIDTH = 5;
 
 // GameBoard-luokka
-// GameBoard class
-class GameBoard
-{
+class GameBoard {
 public:
-    // Rakentaja: tarvittaessa voit lisätä parametreja
-    // Constructor: you can add parameters if needed
+    // Rakentaja
     GameBoard(char piece);
-    void initializeBoard();
-    bool validateCoordinates(const std::vector<std::string>& input);
-    bool validateMove(int x1, int y1, int x2, int y2);
-    void makeMove(int x1, int y1, int x2, int y2);
-    int getPiecesLeft() const;
+
+    // Hakee tehtyjen siirtojen määrän.
+    // Parametrit: ei parametreja.
+    // Paluuarvo: tehtyjen siirtojen lukumäärä.
     int getMoveCount() const;
 
-    // Tulostaa pelilaudan (kunhan olet viimeistellyt metodin).
-    // Prints the gameboard (after you have finished the method).
+    // Hakee jäljellä olevien pelimerkkien määrän.
+    // Parametrit: ei parametreja.
+    // Paluuarvo: jäljellä olevien pelimerkkien lukumäärä.
+    int getPiecesLeft() const;
+
+    // Tarkistaa, että käyttäjän antamat koodrinaatit ovat kelvolliset.
+    // Parametrit: vektori, jossa käyttäjän antama syöte.
+    // Paluuarvo: totuusarvo siitä, ovatko koordinaatit kelvolliset.
+    bool validateCoordinates(const std::vector<std::string>& input);
+
+    // Tarkistaa, että käyttäjän haluama siirto on mahdollinen.
+    // Parametrit: koordinaatit (x1, y1, x2, y2) kokonaislukuina.
+    // Paluuarvo: totuusarvo siitä, onko toivottu siirto mahdollinen.
+    bool validateMove(int x1, int y1, int x2, int y2);
+
+    // Tekee siirron pelilaudalla.
+    // Parametrit: koordinaatit (x1, y1, x2, y2) kokonaislukuina.
+    //Paluuarvo: vektori, jossa merkkijono jaettuna osiin
+    void makeMove(int x1, int y1, int x2, int y2);
+
+    // Alustaa pelilaudan.
+    // Parametrit: ei parametreja.
+    // Paluuarvo: ei paluuarvoa.
+    void initializeBoard();
+
+    // Tulostaa pelilaudan.
+    // Parametrit: ei parametreja.
+    // Paluuarvo: ei paluuarvoa.
     void print() const;
 
+
 private:
-    // Tulostaa annetun pituisen rivin annettua tulostumerkkiä.
-    // Prints a line with the given length and fill character.
     char piece_;
-    void print_line(unsigned int length, char fill_character) const;
-    std::vector<std::vector<char>> board;
     int moves_;
     int pieces_left_;
+
+    // Tulostaa annetun pituisen rivin annettua tulostumerkkiä.
+    // Parametrit: kokonaisluku pituus ja merkki täyttävästä merkistä.
+    // Paluuarvo: ei paluuarvoa.
+    void print_line(unsigned int length, char fill_character) const;
+
+    // Vektori, johon pelilauta ja sen pelinappulat lisätään.
+    std::vector<std::vector<char>> board;
+
 };
 
 #endif // GAMEBOARD_HH
