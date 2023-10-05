@@ -18,7 +18,7 @@ int main()
     ifstream input_olio(input);
 
     if ( not input_olio ) {
-        cout << "Error! The file not_a_file.input cannot be opened." << endl;
+        cout << "Error! The file " << input <<" cannot be opened." << endl;
         return EXIT_FAILURE;
     }
     else {
