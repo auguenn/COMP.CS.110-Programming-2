@@ -9,7 +9,13 @@ bool palindrome_recursive(std::string s)
   RECURSIVE_FUNC
   // Do not remove RECURSIVE_FUNC declaration, it's necessary for automatic testing to work
   // ------------
-
+          if(s.length()==1 || s.length()==0){
+                 return true;
+             }
+             if(s[0]==s[s.length()-1]){
+                 return palindrome_recursive(s.substr(1,s.length()-2));
+             }
+             return false;
 
   // Add your implementation here
 }
