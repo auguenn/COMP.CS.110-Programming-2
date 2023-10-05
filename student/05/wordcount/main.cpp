@@ -2,65 +2,110 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <vector>
+#include <set>
 using namespace std;
+
+using split_string = vector<string> ;
+
+split_string split(const string &line,
+                               const char sep,
+                               bool ignore_empty = false)
+{
+  vector<string> parts = {};
+  string part = "";
+
+  for(char c : line)
+    {
+      // checking separate or not
+      if(c == sep)
+        {
+          //checking empty
+          if (!(part.empty() &&  ignore_empty))
+            {
+              parts.push_back(part);
+            }
+          part.clear();
+        }
+      else{
+          part = part + c;
+        }
+    }
+  parts.push_back(part);
+  return parts;
+}
+
+void print_word_data (pair<string , set<int>> const &word  )
+{
+  uint total_row_number = word.second.size();
+  cout << word.first << ' ' << total_row_number << ':';
+
+  for(set<int>::iterator iter = word.second.begin();
+      iter != word.second.end();
+      iter++)
+    {
+        cout << ' ' << *iter;
+
+      //  checking if last row number
+        if(++iter != word.second.end())
+          {
+            cout << ',';
+
+          }
+        iter--;
+    }
+     cout << endl;
+}
 
 int main()
 {
-    string input_file="";
-    cout<< "Input file: " ;
-    cin >> input_file ;
-    ifstream input(input_file);
+  //gettig filename
 
-    if ( !input ) {
-        cout << "Error! The file "<< input_file << " cannot be opened." <<endl;
-        return EXIT_FAILURE;
+  cout << "Input file: ";
+
+  string filename;
+  getline(cin, filename);
+
+  //try opening
+  ifstream file(filename);
+
+
+  if (!file)
+    {
+      cout << "Error! The file "<<filename
+           <<" cannot be opened."
+           <<endl;
+      return EXIT_FAILURE;
     }
-    multimap<string, int>  words;
 
-        //string word;
+  //Looping through file and saving values
+  map<string, set<int>> words;
+  string line;
+  vector <string> lineWords;
+  vector <string>::iterator words_iter;
+  uint line_counter = 1;
 
-        for(int lines=1;input;lines++){
-            string buf;
-            getline( input, buf);
-            istringstream i( buf );
-            if(i){
-                string line;
-                while(i>>line){
-                    if (line != ""){
-                        words.insert( pair<string,int>( line, lines ));
-                    }
+  while (getline(file, line))
+    {
+      lineWords = split(line,' ',true);
 
-                }
-            }
-        }
-
-        input.close();
-
-        multimap< string, int>::iterator it1;
-        multimap< string, int>::iterator it2;
-
-        for ( it1 = words.begin(); it1 != words.end(); )
+      words_iter = lineWords.begin();
+      while(words_iter != lineWords.end())
         {
-            it2 = words.upper_bound( (*it1).first );
-            string s="";
-            cout << (*it1).first << " " <<words.count((*it1).first)<< ": "  ;
-
-            for ( ; it1 != it2; it1++ )
+          // checking word in the data
+          if(words.find(*words_iter) == words.end())
             {
-                s+=to_string((*it1).second) + ", ";
+              words.insert({*words_iter, {}});
+            }
 
-            }
-            for(unsigned int i=3;i<s.length();i++){
-                if(s[0]==s[3]) s.erase(1,3);
-                else if(s[6]==s[3]) s.erase(4,6);
-                else if(i%3==0){
-                    if(s[i]==s[i-3]) {
-                        s.erase(i-2,i);
-                    }
-                }
-            }
-            cout<< s.substr(0,s.length()-2);
-            cout << endl;
+          words.at(*words_iter).insert(line_counter);
+          ++words_iter;
         }
+      ++line_counter;
+    }
+  for (pair<string , set<int>> const &word_data : words)
+    {
+      print_word_data(word_data);
+    }
 
 }
