@@ -92,6 +92,43 @@ void printPlaysInOrder(vector<Theatre>& theatres) {
         }
 }
 
+void printTheatresOfPlay(vector<Theatre>& theatres, const string& playName) {
+    vector<string> theatre_names;
+
+    if (playName.find('/') != string::npos) {
+           cout << PLAY_NOT_FOUND << endl;
+           return;
+       }
+
+       // Käydään läpi kaikki teatterit ja etsitään ne, joissa annettu näytelmä esitetään
+       for (const auto& theatre : theatres) {
+           for (const auto& play : theatre.plays) {
+               string playTitle = play.second.title;
+               size_t found = playTitle.find('/');
+
+               // Tarkista, onko näytelmän nimi tai alias osa haettua nimeä
+               if (playTitle == playName || (found != string::npos &&
+                   (playTitle.substr(0, found) == playName || playTitle.substr(found + 1) == playName))) {
+                   theatre_names.push_back(theatre.name);
+                   break;  // Lopeta teatterin tarkastelu, koska se löytyi jo
+               }
+           }
+       }
+
+       // Järjestetään teatterien nimet aakkosjärjestykseen
+       sort(theatre_names.begin(), theatre_names.end());
+
+       if (theatre_names.empty()) {
+           cout << PLAY_NOT_FOUND << endl;
+           return;
+       }
+
+       // Tulostetaan teatterien nimet
+       for (const string& theatre_name : theatre_names) {
+           cout << theatre_name << endl;
+       }
+}
+
 
 void addToStructure(Theatre& theatre, const vector<string>& splitted_row) {
 
@@ -224,6 +261,12 @@ int main() {
         else if (command_parts.at(0) == "plays") {
             if (isCommandLength(command_parts, 1) == true) {
                printPlaysInOrder(theatres);
+            }
+        }
+        else if (command_parts.at(0) == "theatres_of_play") {
+            if (isCommandLength(command_parts, 2)) {
+                string playName = command_parts.at(1);
+                printTheatresOfPlay(theatres, playName);
             }
         }
         else if (command_parts.at(0) == "quit") {
