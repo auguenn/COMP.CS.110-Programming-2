@@ -168,7 +168,38 @@ void printPlaysInTheatre(vector<Theatre>& theatres, const string& theatre_name) 
         }
 }
 
+void printPlayersInPlay(const vector<Theatre>& theatres, const string& playName, const string& theatreName) {
+    map<string, set<string>> theatrePlayers;
 
+       if (playName.find('/') != string::npos) {
+           cout << PLAY_NOT_FOUND << endl;
+           return;
+       }
+
+       for (const auto& theatre : theatres) {
+           if (theatreName.empty() || theatre.name == theatreName) {
+               for (const auto& play : theatre.plays) {
+                   string fullPlayName = play.second.title + " (" + play.second.actor + ")";
+                   if (playName.empty() || fullPlayName.find(playName) != string::npos) {
+                       theatrePlayers[theatre.name].insert(play.second.actor);
+                   }
+               }
+           }
+       }
+
+       for (const auto& entry : theatrePlayers) {
+           const string& theatreName = entry.first;
+           const set<string>& players = entry.second;
+
+           for (const string& player : players) {
+               cout << theatreName << " : " << player << endl;
+           }
+       }
+
+       if (theatrePlayers.empty()) {
+           cout << PLAY_NOT_FOUND << endl;
+       }
+}
 
 void addToStructure(Theatre& theatre, const vector<string>& splitted_row) {
 
@@ -273,12 +304,12 @@ bool isCommandLength (vector<string> command_parts,
 
 
 int main() {
+
     vector<Theatre> theatres;
 
     if (!isFormat(theatres)) {
         return EXIT_FAILURE;
     }
-
 
     string command;
     vector<string> command_parts;
@@ -315,6 +346,24 @@ int main() {
                 printPlaysInTheatre(theatres, theatreName);
             }
         }
+        else if (command_parts.at(0) == "plays_in_town") {
+            if (isCommandLength(command_parts, 2)) {
+                string townName = command_parts.at(1);
+                // printPlaysInTown(theatres, townName);
+            }
+        }
+        else if (command_parts.at(0) == "players_in_play") {
+                if (command_parts.size() < 2 || command_parts.size() > 3) {
+                    cout << WRONG_PARAMETERS << endl;
+                    continue;
+                }
+                string playName = command_parts.at(1);
+                string theatreName = "";
+                if (command_parts.size() == 3) {
+                    theatreName = command_parts.at(2);
+                }
+                printPlayersInPlay(theatres, playName, theatreName);
+            }
         else if (command_parts.at(0) == "quit") {
             if(isCommandLength(command_parts, 1) == true) {
                 break;
