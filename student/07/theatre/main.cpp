@@ -4,6 +4,7 @@
 #include <fstream>
 #include <algorithm>
 #include <set>
+#include <sstream>
 
 using namespace std;
 
@@ -80,7 +81,8 @@ void printPlaysInOrder(vector<Theatre>& theatres) {
 
 
                 if (found != string::npos) {
-                    playTitle = playTitle.substr(0, found) + " ** " + playTitle.substr(found + 1);
+                    playTitle = playTitle.substr(0, found) + " ** " +
+                            playTitle.substr(found + 1);
                 }
 
                 uniquePlayTitles.insert(playTitle);
@@ -100,7 +102,8 @@ void printTheatresOfPlay(vector<Theatre>& theatres, const string& playName) {
            return;
        }
 
-       // Käydään läpi kaikki teatterit ja etsitään ne, joissa annettu näytelmä esitetään
+       // Käydään läpi kaikki teatterit ja etsitään ne, joissa annettu näytelmä
+       // esitetään
        for (const auto& theatre : theatres) {
            for (const auto& play : theatre.plays) {
                string playTitle = play.second.title;
@@ -108,7 +111,8 @@ void printTheatresOfPlay(vector<Theatre>& theatres, const string& playName) {
 
                // Tarkista, onko näytelmän nimi tai alias osa haettua nimeä
                if (playTitle == playName || (found != string::npos &&
-                   (playTitle.substr(0, found) == playName || playTitle.substr(found + 1) == playName))) {
+                   (playTitle.substr(0, found) == playName ||
+                    playTitle.substr(found + 1) == playName))) {
                    theatre_names.push_back(theatre.name);
                    break;  // Lopeta teatterin tarkastelu, koska se löytyi jo
                }
@@ -128,6 +132,42 @@ void printTheatresOfPlay(vector<Theatre>& theatres, const string& playName) {
            cout << theatre_name << endl;
        }
 }
+
+void printPlaysInTheatre(vector<Theatre>& theatres, const string& theatre_name) {
+    // Etsitään teatteri, jonka nimi on annettu nimi parametrina.
+    auto theatre_iter = find_if(theatres.begin(), theatres.end(),
+        [&theatre_name](const Theatre& theatre)
+                { return theatre.name == theatre_name; });
+
+    // Jos teatteria ei löydy
+    if (theatre_iter == theatres.end()) {
+        cout << THEATRE_NOT_FOUND << endl;
+        return;
+    }
+
+    vector<string> play_titles;
+
+        // Etsitään annetun teatterin kaikki näytelmät ja lisätään ne play_titles-vektoriin
+        for (const auto& theatre : theatres) {
+            if (theatre.name == theatre_name) {
+                for (const auto& play : theatre.plays) {
+                    play_titles.push_back(play.second.title);
+                }
+            }
+        }
+
+        // Järjestetään näytelmien nimet aakkosjärjestykseen
+        sort(play_titles.begin(), play_titles.end());
+
+        // Poistetaan mahdolliset duplikaatit
+        play_titles.erase(unique(play_titles.begin(), play_titles.end()), play_titles.end());
+
+        // Tulostetaan näytelmät
+        for (const string& play_title : play_titles) {
+            cout << play_title << endl;
+        }
+}
+
 
 
 void addToStructure(Theatre& theatre, const vector<string>& splitted_row) {
@@ -267,6 +307,12 @@ int main() {
             if (isCommandLength(command_parts, 2)) {
                 string playName = command_parts.at(1);
                 printTheatresOfPlay(theatres, playName);
+            }
+        }
+        else if (command_parts.at(0) == "plays_in_theatre") {
+            if (isCommandLength(command_parts, 2)) {
+                string theatreName = command_parts.at(1);
+                printPlaysInTheatre(theatres, theatreName);
             }
         }
         else if (command_parts.at(0) == "quit") {
