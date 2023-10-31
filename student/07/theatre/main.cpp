@@ -3,6 +3,7 @@
 #include <map>
 #include <fstream>
 #include <algorithm>
+#include <set>
 
 using namespace std;
 
@@ -69,6 +70,27 @@ void printTheatresInOrder(vector<Theatre>& theatres){
     }
 }
 
+void printPlaysInOrder(vector<Theatre>& theatres) {
+    set<string> uniquePlayTitles;
+
+        for (const auto& theatre : theatres) {
+            for (const auto& play : theatre.plays) {
+                string playTitle = play.second.title;
+                size_t found = playTitle.find('/');
+
+
+                if (found != string::npos) {
+                    playTitle = playTitle.substr(0, found) + " ** " + playTitle.substr(found + 1);
+                }
+
+                uniquePlayTitles.insert(playTitle);
+            }
+        }
+
+        for (const string& playTitle : uniquePlayTitles) {
+            cout << playTitle << endl;
+        }
+}
 
 
 void addToStructure(Theatre& theatre, const vector<string>& splitted_row) {
@@ -197,6 +219,11 @@ int main() {
         if (command_parts.at(0) == "theatres") {
             if (isCommandLength(command_parts, 1) == true) {
                printTheatresInOrder(theatres);
+            }
+        }
+        else if (command_parts.at(0) == "plays") {
+            if (isCommandLength(command_parts, 1) == true) {
+               printPlaysInOrder(theatres);
             }
         }
         else if (command_parts.at(0) == "quit") {
