@@ -81,7 +81,7 @@ void printPlaysInOrder(vector<Theatre>& theatres) {
 
 
                 if (found != string::npos) {
-                    playTitle = playTitle.substr(0, found) + " ** " +
+                    playTitle = playTitle.substr(0, found) + " *** " +
                             playTitle.substr(found + 1);
                 }
 
@@ -248,6 +248,7 @@ bool isFormat(vector<Theatre>& theatres) {
     }
 
     // Luetaan tiedoston rivit yksi kerrallaan
+    int line_number = 1;
     string row;
     vector<string> splitted_row;
     while(getline(file_object, row)) {
@@ -258,7 +259,7 @@ bool isFormat(vector<Theatre>& theatres) {
         // ole tyhjiä
         if(splitted_row.size() != NUMBER_OF_FIELDS || find(splitted_row.begin(),
             splitted_row.end(), "") != splitted_row.end()) {
-            cout << EMPTY_FIELD << endl;
+            cout << EMPTY_FIELD << line_number << endl;
             return false;
         }
 
@@ -281,6 +282,7 @@ bool isFormat(vector<Theatre>& theatres) {
             addToStructure(theatre, splitted_row);
             theatres.push_back(theatre);
         }
+        line_number++;
     }
 
     file_object.close();
@@ -288,7 +290,42 @@ bool isFormat(vector<Theatre>& theatres) {
 }
 
 
+bool validatePlayAndTheatre(const vector<Theatre>& theatres, const string& playName, const string& theatreName) {
+    bool playFound = false;
+    bool theatreFound = true; // Oletusarvoisesti oletetaan, että teatteri on kunnossa, ellei toista parametria ole annettu.
 
+    // Tarkistetaan, onko annettua teatterin nimeä olemassa
+    if (!theatreName.empty()) {
+        theatreFound = false;
+        for (const auto& theatre : theatres) {
+            if (theatre.name == theatreName) {
+                theatreFound = true;
+                break;
+            }
+        }
+    }
+
+    // Etsitään, onko annettua näytelmän nimeä olemassa
+    for (const auto& theatre : theatres) {
+        for (const auto& play : theatre.plays) {
+            string fullPlayName = play.second.title + " (" + play.second.actor + ")";
+            if (fullPlayName.find(playName) != string::npos) {
+                playFound = true;
+                break;
+            }
+        }
+    }
+
+    if (!theatreFound) {
+        cout << THEATRE_NOT_FOUND << endl;
+    }
+
+    else if (!playFound) {
+        cout << PLAY_NOT_FOUND << endl;
+    }
+
+    return theatreFound && playFound;
+}
 
 
 bool isCommandLength (vector<string> command_parts,
@@ -353,23 +390,27 @@ int main() {
             }
         }
         else if (command_parts.at(0) == "players_in_play") {
-                if (command_parts.size() < 2 || command_parts.size() > 3) {
-                    cout << WRONG_PARAMETERS << endl;
-                    continue;
-                }
-                string playName = command_parts.at(1);
-                string theatreName = "";
-                if (command_parts.size() == 3) {
-                    theatreName = command_parts.at(2);
-                }
+            if (command_parts.size() < 2 || command_parts.size() > 3) {
+                cout << WRONG_PARAMETERS << endl;
+                continue;
+            }
+            string playName = command_parts.at(1);
+            string theatreName = "";
+
+            if (command_parts.size() == 3) {
+                theatreName = command_parts.at(2);
+            }
+
+            // Kutsu virhetarkastelufunktiota
+            if (validatePlayAndTheatre(theatres, playName, theatreName)) {
                 printPlayersInPlay(theatres, playName, theatreName);
             }
+        }
         else if (command_parts.at(0) == "quit") {
             if(isCommandLength(command_parts, 1) == true) {
                 break;
             }
         }
-
 
         // Virheilmoitus, jos annetaan tuntematon komento
         else {
@@ -377,7 +418,6 @@ int main() {
             continue;
         }
         }
-
 
     return EXIT_SUCCESS;
 }
