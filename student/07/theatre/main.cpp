@@ -50,70 +50,63 @@ vector<string> split(const string& str, char delim = ';') {
     return result;
 }
 
-void addPlayToStructure(Theatre& theatre, const vector<string>& splitted_row) {
+void printTheatresInOrder(vector<Theatre>& theatres){
+
+    vector<string> theatre_names;
+
+    // Käydään läpi kaikki teatterit ja lisätään niiden nimet
+    // theatre_names -vektoriin
+    for(auto& theatre : theatres) {
+        theatre_names.push_back(theatre.name);
+    }
+
+    // Järjestetään teatterien nimet aakkosjärjestykseen
+    sort(theatre_names.begin(), theatre_names.end());
+
+    // Tulostetaan teatterien nimet
+    for(auto& theatre_name : theatre_names) {
+        cout << theatre_name << endl;
+    }
+}
+
+
+
+void addToStructure(Theatre& theatre, const vector<string>& splitted_row) {
+
+    // Otetaan riviltä tiedot talteen merkkijonomuuttujiin
+    string theatre_town = splitted_row[0];
+    string theatre_name = splitted_row[1];
     string play_title = splitted_row[2];
-       string actor_name = splitted_row[3];
-       string free_seats = splitted_row[4];
+    string actor_name = splitted_row[3];
+    string free_seats = splitted_row[4];
 
-       if (free_seats == "none") {
-           free_seats = "0";
-       }
-
-       Play play;
-       play.actor = actor_name;
-       play.title = play_title;
-       play.free_seats = stoi(free_seats);
-
-       theatre.plays.emplace(play.actor + play.title, play);
-
-       string theatre_town = splitted_row[0];
-       string theatre_name = splitted_row[1];
-
-       theatre.town = theatre_town;
-       theatre.name = theatre_name;
-
-
-}
-
-void addTheatreToStructure(vector<Theatre>& theatres, const vector<string>& splitted_row) {
-
-
-    bool theatre_exists = false;
-    for (auto& theatre : theatres) {
-        if (theatre.name == splitted_row[1] && theatre.town == splitted_row[0]) {
-            addPlayToStructure(theatre, splitted_row);
-            theatre_exists = true;
-            break;
-        }
+    // Jos näytelmässä ei ole vapaita paikkoja
+    if(free_seats== "none") {
+        free_seats = "0";
     }
 
-    if (!theatre_exists) {
-        Theatre theatre;
-        addPlayToStructure(theatre, splitted_row);
-        theatres.push_back(theatre);
-    }
+    // Luodaan uusi näytelmä-olio ja asetetaan sille arvot
+    Play play;
+    play.title = play_title;
+    play.actor = actor_name;
+    play.free_seats = stoi(free_seats);
+
+    // Asetetaan teatterin tiedot tietorakenteeseen
+    theatre.town = theatre_town;
+    theatre.name = theatre_name;
+
+    // Lisätään näytelmä teatterin näytelmätietokantaan (map-rakenne)
+    theatre.plays[play.title + play.actor] = play;
 }
 
-bool isFormat(ifstream& file_object) {
-    string row;
-    vector<string> splitted_row;
 
-    while (getline(file_object, row)) {
-        splitted_row = split(row, ';');
 
-        if (splitted_row.size() != NUMBER_OF_FIELDS || find(splitted_row.begin(),
-            splitted_row.end(), "") != splitted_row.end()) {
-            cout << EMPTY_FIELD << row << endl;
-            return false;
-        }
-    }
-
-    return true;
-}
-
-int main() {
-    vector<Theatre> theatres;
-
+// Lukee tiedoston ja lisää sen sisällön tietorakenteeseen.
+// Parametrit: vector<Theatre>& theatres - viittaus teatterivektoriin,
+// joka sisältää teatterien tiedot
+// Paluuarvo: totuusarvo sen mukaan onko luettava tiedosto
+// oikeanmallinen
+bool isFormat(vector<Theatre>& theatres) {
     string file_name;
     cout << "Input file: ";
     getline(cin, file_name);
@@ -121,20 +114,104 @@ int main() {
 
     if (!file_object) {
         cout << FILE_ERROR << endl;
-        return EXIT_FAILURE;
+        return false;
     }
 
-    if (!isFormat(file_object)) {
-        return EXIT_FAILURE;
-    }
-
+    // Luetaan tiedoston rivit yksi kerrallaan
     string row;
     vector<string> splitted_row;
-
-    while (getline(file_object, row)) {
+    while(getline(file_object, row)) {
+        // Jaetaan rivi osiin
         splitted_row = split(row, ';');
-        addTheatreToStructure(theatres, splitted_row);
+
+        // Tarkistetaan, että rivi sisältää viisi osaa ja että ne eivät
+        // ole tyhjiä
+        if(splitted_row.size() != NUMBER_OF_FIELDS || find(splitted_row.begin(),
+            splitted_row.end(), "") != splitted_row.end()) {
+            cout << EMPTY_FIELD << endl;
+            return false;
+        }
+
+        // Tarkistetaan, onko teatteri jo olemassa tietorakenteessa
+        bool theatre_exists = false;
+        for (auto& theatre : theatres) {
+            if (theatre.name == splitted_row[1]) {
+                // Jos teatteri on olemassa, lisätään uusi näytelmä sen
+                // tietokantaan
+                addToStructure(theatre, splitted_row);
+                theatre_exists = true;
+                break;
+            }
+        }
+
+        // Jos teatteria ei ole vielä tietorakenteessa, luodaan uusi
+        // teatteri-olio ja lisätään se tietorakenteeseen
+        if (!theatre_exists) {
+            Theatre theatre;
+            addToStructure(theatre, splitted_row);
+            theatres.push_back(theatre);
+        }
     }
+
+    file_object.close();
+    return true;
+}
+
+
+
+
+
+bool isCommandLength (vector<string> command_parts,
+                      unsigned int right_length) {
+    if(command_parts.size() != right_length) {
+        cout<<WRONG_PARAMETERS<<endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+
+int main() {
+    vector<Theatre> theatres;
+
+    if (!isFormat(theatres)) {
+        return EXIT_FAILURE;
+    }
+
+
+    string command;
+    vector<string> command_parts;
+
+    // Silmukka, joka kysyy käyttäjältä komentoja ja ohjelma
+        // kutsuu eri funktioita komentojen mukaisesti.
+        // Silmukka loppuu lopetuskomentoon 'quit'.
+        while(command != "quit") {
+            cout << PROMPT;
+            getline(cin, command);
+            command_parts = split(command, ' ');
+
+        // Jokaisen komennon kohdalla tarkistetaan, että komennossa
+        // on oikea määrä osia.
+        if (command_parts.at(0) == "theatres") {
+            if (isCommandLength(command_parts, 1) == true) {
+               printTheatresInOrder(theatres);
+            }
+        }
+        else if (command_parts.at(0) == "quit") {
+            if(isCommandLength(command_parts, 1) == true) {
+                break;
+            }
+        }
+
+
+        // Virheilmoitus, jos annetaan tuntematon komento
+        else {
+            cout<<COMMAND_NOT_FOUND<<endl;
+            continue;
+        }
+        }
 
 
     return EXIT_SUCCESS;
