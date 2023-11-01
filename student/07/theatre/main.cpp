@@ -659,7 +659,7 @@ void processCommand(const string& command, vector<Theatre>& theatres) {
     }
     else if (command_parts[0] == "quit") {
         if (isCommandLength(command_parts, 1)) {
-            return;
+            exit(0);
         }
     }
     // Vieraan komennon virhetuloste
