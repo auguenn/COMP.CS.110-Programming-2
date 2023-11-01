@@ -178,6 +178,15 @@ void printPlaysInTheatre(vector<Theatre>& theatres,
 }
 
 
+void printPlayInfo(const string& theatreName, const string& playTitle, int freeSeats) {
+    size_t found = playTitle.find('/');
+    if (found != string::npos) {
+        cout << theatreName << " : " << playTitle.substr(0, found) << " --- " << playTitle.substr(found + 1) << " : " << freeSeats << endl;
+    } else {
+        cout << theatreName << " : " << playTitle << " : " << freeSeats << endl;
+    }
+}
+
 void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
     unordered_map<string, pair<string, int>> lastOccurrencePlays;
 
@@ -192,15 +201,13 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
         }
     }
 
-    if (!townFound) { // Tarkistetaan, onko paikkakuntaa löytynyt
-            cout << TOWN_NOT_FOUND << endl; // Tulostetaan virheilmoitus tarvittaessa
-            return;
-        }
+    if (!townFound) {
+        cout << TOWN_NOT_FOUND << endl;
+        return;
+    }
 
     vector<pair<string, pair<string, int>>> sortedPlays(lastOccurrencePlays.begin(), lastOccurrencePlays.end());
 
-
-    // Lajittele näytelmät teatterin mukaan ja näytelmän nimen mukaan
     sort(sortedPlays.begin(), sortedPlays.end(), [](const pair<string, pair<string, int>>& a, const pair<string, pair<string, int>>& b) {
         if (a.second.first == b.second.first) {
             return a.first < b.first;
@@ -210,7 +217,6 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
 
     bool noAvailablePlays = true;
 
-    // Tulosta näytelmät
     for (const auto& entry : sortedPlays) {
         const string& playTitle = entry.first;
         const string& theatreName = entry.second.first;
@@ -218,19 +224,13 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
 
         if (freeSeats > 0) {
             noAvailablePlays = false;
-            size_t found = playTitle.find('/');
-
-            if (found != string::npos) {
-                cout << theatreName << " : " << playTitle.substr(0, found) << " --- " << playTitle.substr(found + 1) << " : " << freeSeats << endl;
-            } else {
-                cout << theatreName << " : " << playTitle << " : " << freeSeats << endl;
-            }
+            printPlayInfo(theatreName, playTitle, freeSeats);
         }
     }
-    // Tarkista, onko vapaita paikkoja, ja tulosta "NOT_AVAILABLE" tarvittaessa
-        if (noAvailablePlays) {
-            cout << NOT_AVAILABLE << endl;
-        }
+
+    if (noAvailablePlays) {
+        cout << NOT_AVAILABLE << endl;
+    }
 }
 
 
