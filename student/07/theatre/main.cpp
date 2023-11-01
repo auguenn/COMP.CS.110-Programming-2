@@ -181,13 +181,21 @@ void printPlaysInTheatre(vector<Theatre>& theatres,
 void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
     unordered_map<string, pair<string, int>> lastOccurrencePlays;
 
+    bool townFound = false;
+
     for (auto& theatre : theatres) {
         if (theatre.town == town) {
+            townFound = true;
             for (const auto& play : theatre.plays) {
                 lastOccurrencePlays[play.second.title] = make_pair(theatre.name, play.second.free_seats);
             }
         }
     }
+
+    if (!townFound) { // Tarkistetaan, onko paikkakuntaa löytynyt
+            cout << TOWN_NOT_FOUND << endl; // Tulostetaan virheilmoitus tarvittaessa
+            return;
+        }
 
     vector<pair<string, pair<string, int>>> sortedPlays(lastOccurrencePlays.begin(), lastOccurrencePlays.end());
 
@@ -200,6 +208,8 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
         return a.second.first < b.second.first;
     });
 
+    bool noAvailablePlays = true;
+
     // Tulosta näytelmät
     for (const auto& entry : sortedPlays) {
         const string& playTitle = entry.first;
@@ -207,6 +217,7 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
         const int freeSeats = entry.second.second;
 
         if (freeSeats > 0) {
+            noAvailablePlays = false;
             size_t found = playTitle.find('/');
 
             if (found != string::npos) {
@@ -216,6 +227,10 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
             }
         }
     }
+    // Tarkista, onko vapaita paikkoja, ja tulosta "NOT_AVAILABLE" tarvittaessa
+        if (noAvailablePlays) {
+            cout << NOT_AVAILABLE << endl;
+        }
 }
 
 
