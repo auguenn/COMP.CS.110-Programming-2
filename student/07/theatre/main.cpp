@@ -178,16 +178,21 @@ void printPlaysInTheatre(vector<Theatre>& theatres,
 }
 
 
-void printPlayInfo(const string& theatreName, const string& playTitle, int freeSeats) {
+void printPlayInfo(const string& theatreName, const string& playTitle,
+                                                            int freeSeats) {
     size_t found = playTitle.find('/');
+
     if (found != string::npos) {
-        cout << theatreName << " : " << playTitle.substr(0, found) << " --- " << playTitle.substr(found + 1) << " : " << freeSeats << endl;
-    } else {
-        cout << theatreName << " : " << playTitle << " : " << freeSeats << endl;
+        cout << theatreName << " : " << playTitle.substr(0, found) << " --- "
+                 << playTitle.substr(found + 1) << " : " << freeSeats << endl;
+    }
+    else {
+       cout << theatreName << " : " << playTitle << " : " << freeSeats << endl;
     }
 }
 
-void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
+void findPlaysInTown(vector<Theatre>& theatres, const string& town) {
+
     unordered_map<string, pair<string, int>> lastOccurrencePlays;
 
     bool townFound = false;
@@ -196,7 +201,8 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
         if (theatre.town == town) {
             townFound = true;
             for (const auto& play : theatre.plays) {
-                lastOccurrencePlays[play.second.title] = make_pair(theatre.name, play.second.free_seats);
+                lastOccurrencePlays[play.second.title] =
+                               make_pair(theatre.name, play.second.free_seats);
             }
         }
     }
@@ -206,9 +212,11 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
         return;
     }
 
-    vector<pair<string, pair<string, int>>> sortedPlays(lastOccurrencePlays.begin(), lastOccurrencePlays.end());
+    vector<pair<string, pair<string, int>>>
+           sortedPlays(lastOccurrencePlays.begin(), lastOccurrencePlays.end());
 
-    sort(sortedPlays.begin(), sortedPlays.end(), [](const pair<string, pair<string, int>>& a, const pair<string, pair<string, int>>& b) {
+    sort(sortedPlays.begin(), sortedPlays.end(), [](const pair<string,
+             pair<string, int>>& a, const pair<string, pair<string, int>>& b) {
         if (a.second.first == b.second.first) {
             return a.first < b.first;
         }
@@ -234,8 +242,8 @@ void printPlaysInTown(vector<Theatre>& theatres, const string& town) {
 }
 
 
-void printPlayersInPlay(const vector<Theatre>& theatres, const string& playName,
-                        const string& theatreName) {
+void printPlayersInPlay(const vector<Theatre>& theatres,
+                           const string& playName, const string& theatreName) {
 
     map<string, set<string>> theatrePlayers;
 
@@ -407,84 +415,82 @@ bool isCommandLength (vector<string> command_parts,
 }
 
 
-int main() {
+void processCommand(const string& command, vector<Theatre>& theatres) {
 
-    vector<Theatre> theatres;
+    vector<string> command_parts = split(command, ' ');
 
-    if (!isFormat(theatres)) {
-        return EXIT_FAILURE;
+    if (command_parts.empty()) {
+        cout << COMMAND_NOT_FOUND << endl;
+        return;
     }
 
-    string command;
-    vector<string> command_parts;
-
-    // Silmukka, joka kysyy käyttäjältä komentoja ja ohjelma
-        // kutsuu eri funktioita komentojen mukaisesti.
-        // Silmukka loppuu lopetuskomentoon 'quit'.
-        while(command != "quit") {
-            cout << PROMPT;
-            getline(cin, command);
-            command_parts = split(command, ' ');
-
-        // Jokaisen komennon kohdalla tarkistetaan, että komennossa
-        // on oikea määrä osia.
-        if (command_parts.at(0) == "theatres") {
-            if (isCommandLength(command_parts, 1) == true) {
-               printTheatresInOrder(theatres);
-            }
+    if (command_parts[0] == "theatres") {
+        if (isCommandLength(command_parts, 1)) {
+            printTheatresInOrder(theatres);
         }
-        else if (command_parts.at(0) == "plays") {
-            if (isCommandLength(command_parts, 1) == true) {
-               printPlaysInOrder(theatres);
-            }
+    }
+    else if (command_parts[0] == "plays") {
+        if (isCommandLength(command_parts, 1)) {
+            printPlaysInOrder(theatres);
         }
-        else if (command_parts.at(0) == "theatres_of_play") {
-            if (isCommandLength(command_parts, 2)) {
-                string playName = command_parts.at(1);
-                printTheatresOfPlay(theatres, playName);
-            }
+    }
+    else if (command_parts[0] == "theatres_of_play") {
+        if (isCommandLength(command_parts, 2)) {
+            string playName = command_parts[1];
+            printTheatresOfPlay(theatres, playName);
         }
-        else if (command_parts.at(0) == "plays_in_theatre") {
-            if (isCommandLength(command_parts, 2)) {
-                string theatreName = command_parts.at(1);
-                printPlaysInTheatre(theatres, theatreName);
-            }
+    }
+    else if (command_parts[0] == "plays_in_theatre") {
+        if (isCommandLength(command_parts, 2)) {
+            string theatreName = command_parts[1];
+            printPlaysInTheatre(theatres, theatreName);
         }
-        else if (command_parts.at(0) == "plays_in_town") {
-            if (isCommandLength(command_parts, 2)) {
-                string townName = command_parts.at(1);
-                printPlaysInTown(theatres, townName);
-            }
+    }
+    else if (command_parts[0] == "plays_in_town") {
+        if (isCommandLength(command_parts, 2)) {
+            string townName = command_parts[1];
+            findPlaysInTown(theatres, townName);
         }
-        else if (command_parts.at(0) == "players_in_play") {
-            if (command_parts.size() < 2 || command_parts.size() > 3) {
-                cout << WRONG_PARAMETERS << endl;
-                continue;
-            }
-            string playName = command_parts.at(1);
-            string theatreName = "";
-
-            if (command_parts.size() == 3) {
-                theatreName = command_parts.at(2);
-            }
-
-            // Kutsu virhetarkastelufunktiota
+    }
+    else if (command_parts[0] == "players_in_play") {
+        if (command_parts.size() == 2 || command_parts.size() == 3) {
+            string playName = command_parts[1];
+            string theatreName = (command_parts.size() == 3) ?
+                                                    command_parts[2] : "";
             if (validatePlayAndTheatre(theatres, playName, theatreName)) {
                 printPlayersInPlay(theatres, playName, theatreName);
             }
         }
-        else if (command_parts.at(0) == "quit") {
-            if(isCommandLength(command_parts, 1) == true) {
-                break;
-            }
-        }
-
-        // Virheilmoitus, jos annetaan tuntematon komento
         else {
-            cout<<COMMAND_NOT_FOUND<<endl;
-            continue;
+            cout << WRONG_PARAMETERS << endl;
         }
+    }
+    else if (command_parts[0] == "quit") {
+        if (isCommandLength(command_parts, 1)) {
+            exit(0);
         }
+    }
+    else {
+        cout << COMMAND_NOT_FOUND << endl;
+    }
+}
 
-    return EXIT_SUCCESS;
+
+int main() {
+
+    vector<Theatre> theatres;
+
+       if (!isFormat(theatres)) {
+           return EXIT_FAILURE;
+       }
+
+       string command;
+
+       while (true) {
+           cout << PROMPT;
+           getline(cin, command);
+           processCommand(command, theatres);
+       }
+
+       return EXIT_SUCCESS;
 }
