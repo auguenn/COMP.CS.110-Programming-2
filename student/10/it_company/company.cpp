@@ -140,7 +140,20 @@ void Company::print_current_staff(Params)
 
 void Company::create_project(Params params)
 {
+    if (params.empty()) {
+        std::cout << "Error: Missing project ID." << std::endl;
+        return;
+    }
 
+    const std::string& project_id = params[0];
+    if (all_projects_.count(project_id) > 0) {
+        std::cout << ALREADY_EXISTS << project_id << std::endl;
+        return;
+    }
+
+    auto new_project = std::make_shared<Project>(project_id, Utils::today);
+    all_projects_[project_id].push_back(new_project);
+    std::cout << PROJECT_CREATED << std::endl;
 }
 
 void Company::close_project(Params params)
