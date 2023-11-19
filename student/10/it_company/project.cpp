@@ -33,3 +33,8 @@ bool Project::is_closed()
 {
     return is_closed_;
 }
+
+void Project::close_project(const Date& end) {
+    end_ = end;
+    is_closed_ = true;
+}

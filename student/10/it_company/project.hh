@@ -44,6 +44,8 @@ public:
 
     bool is_closed();
 
+    void close_project(const Date& end);
+
 private:
     /**
      * @brief obvious attributes

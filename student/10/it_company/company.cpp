@@ -141,7 +141,7 @@ void Company::print_current_staff(Params)
 void Company::create_project(Params params)
 {
     if (params.empty()) {
-        std::cout << "Error: Missing project ID." << std::endl;
+        std::cout << NOT_NUMERIC << std::endl;
         return;
     }
 
@@ -158,6 +158,30 @@ void Company::create_project(Params params)
 
 void Company::close_project(Params params)
 {
+    if (params.empty()) {
+            std::cout << NOT_NUMERIC << std::endl;
+            return;
+        }
+
+        const std::string& project_id = params[0];
+        if (all_projects_.count(project_id) == 0) {
+            std::cout << CANT_FIND << project_id << std::endl;
+            return;
+        }
+
+        if (all_projects_[project_id].empty()) {
+            std::cout << CANT_ASSIGN << project_id << std::endl;
+            return;
+        }
+
+        auto& project = all_projects_[project_id].back();
+        if (project->is_closed()) {
+            std::cout << PROJECT_CLOSED << std::endl;
+            return;
+        }
+
+        project->close_project(Utils::today);
+        std::cout << PROJECT_CLOSED << std::endl;
 
 }
 
@@ -178,10 +202,10 @@ void Company::print_projects(Params)
          {
              std::cout << project_id << " : ";
              project->get_start_date().print(); // Tulosta aloituspäivämäärä
+             std::cout << " - ";
 
              if (project->is_closed())
              {
-                 std::cout << " - ";
                  project->get_end_date().print(); // Tulosta sulkemispäivämäärä
              }
 
