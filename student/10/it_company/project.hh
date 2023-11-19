@@ -13,6 +13,7 @@
 #include "date.hh"
 #include "utils.hh"
 #include <string>
+#include <memory>
 
 const std::string NOT_QUALIFIED = "Not qualified any more: ";
 
@@ -43,8 +44,13 @@ public:
     Date get_end_date() const;
 
     bool is_closed();
+    bool is_employee_qualified(const Employee& employee);
+    bool add_requirement(const std::string& req);
 
     void close_project(const Date& end);
+    void remove_employee(const std::shared_ptr<Employee>& employee);
+    std::vector<std::string> update_employees_qualification();
+    bool is_employee_in_project(const std::shared_ptr<Employee>& employee) const;
 
 private:
     /**
@@ -57,6 +63,11 @@ private:
     // More attributes and private methods
     // A boolean attribute to check if the period is closed or not
     bool is_closed_;
+
+    std::vector<std::shared_ptr<Employee>> assigned_staff_;
+    std::vector<std::string> requirements_;
+
+
 };
 
 #endif // PROJECT_HH

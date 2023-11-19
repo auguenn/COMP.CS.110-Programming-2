@@ -2,6 +2,7 @@
 #include "utils.hh"
 #include <iostream>
 #include <set>
+#include <algorithm>
 
 Company::Company()
 {
@@ -216,6 +217,41 @@ void Company::print_projects(Params)
 
 void Company::add_requirement(Params params)
 {
+    if (params.size() != 2) {
+            std::cout << NOT_NUMERIC << std::endl;
+            return;
+        }
+
+        std::string project_id = params[0];
+        std::string requirement = params[1];
+
+        auto project_it = all_projects_.find(project_id);
+        if (project_it == all_projects_.end()) {
+            std::cout << CANT_FIND << project_id << std::endl;
+            return;
+        }
+
+        auto& project = project_it->second;
+
+        for (auto& p : project) {
+            if (p->add_requirement(requirement)) {
+                std::cout << REQUIREMENT_ADDED << project_id << std::endl;
+
+                // Tarkista, jos uusi vaatimus tekee jonkin työntekijän pätevyyden
+                // epäkelpoiseksi ja poista hänet projektista
+                std::vector<std::string> unqualified_employees = p->update_employees_qualification();
+                if (!unqualified_employees.empty()) {
+                    std::cout << NOT_QUALIFIED;
+                    for (const auto& employee : unqualified_employees) {
+                        std::cout << employee << " ";
+                    }
+                    std::cout << std::endl;
+                }
+                return;
+            }
+        }
+
+        std::cout << ALREADY_EXISTS << project_id << std::endl;
 
 }
 
