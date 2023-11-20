@@ -22,15 +22,13 @@ Company::~Company()
         }
 
     // TODO: Deallocate projects
-    for (auto& project_pair : all_projects_)
-       {
-           for (auto& project_ptr : project_pair.second)
-           {
-               // Käytä std::unique_ptr:ia varatun muistin vapauttamiseen
-               project_ptr.reset(); // Vapauta muisti automaattisesti, kun unique_ptr tuhoutuu
-           }
-       }
-       all_projects_.clear();
+    for( std::map<std::string, Project*>::iterator
+             iter = all_projects_.begin();
+             iter != all_projects_.end();
+             ++iter )
+        {
+            delete iter->second;
+        }
 
 }
 
@@ -141,113 +139,71 @@ void Company::print_current_staff(Params)
 
 void Company::create_project(Params params)
 {
-    const std::string& project_id = params[0];
-    if (all_projects_.count(project_id) > 0) {
+    const std::string& project_id = params.at(0);
+    // Checking if there already is or has been a project in company with the same name.
+    if (all_projects_.find(project_id) != all_projects_.end())
+    {
         std::cout << ALREADY_EXISTS << project_id << std::endl;
         return;
     }
 
-    auto new_project = std::make_shared<Project>(project_id, Utils::today);
-    all_projects_[project_id].push_back(new_project);
-    current_projects_[project_id].push_back(new_project);
-    std::cout << PROJECT_CREATED << std::endl;
+    // If given project is a new project, create a new project object
+    // and add it to the all_projects_ -container
+    Project* new_project = nullptr;
+        new_project = new Project(project_id, Utils::today);
+        all_projects_.insert({project_id, new_project});
+        // Lets create a new project for the new project and add it to company's
+        // chronological register
+        all_projects_in_order_.push_back(new_project);
+        // Add project to current projects
+        current_projects_.insert({project_id, new_project});
+        std::cout << PROJECT_CREATED << std::endl;
+
+
 }
 
 
 void Company::close_project(Params params)
 {
-        const std::string& project_id = params[0];
-        if (all_projects_.count(project_id) == 0) {
-            std::cout << CANT_FIND << project_id << std::endl;
-            return;
-        }
+    std::string project_id = params.at(0);
 
-        if (all_projects_[project_id].empty()) {
-            std::cout << CANT_ASSIGN << project_id << std::endl;
-            return;
-        }
+    if (all_projects_.find(project_id) == all_projects_.end())
+    {
+        std::cout << CANT_FIND << project_id << std::endl;
+        return;
+    }
 
-        auto& project = all_projects_[project_id].back();
-        if (project->is_closed()) {
-            std::cout << PROJECT_CLOSED << std::endl;
-            return;
-        }
+    Project* project_to_close = all_projects_[project_id];
 
-        project->close_project(Utils::today);
-        current_projects_.erase(project_id);
+    if (project_to_close->is_closed()) {
         std::cout << PROJECT_CLOSED << std::endl;
+        return;
+    }
 
+    project_to_close->close_project(Utils::today);
+    current_projects_.erase(project_id);
+    std::cout << PROJECT_CLOSED << std::endl;
 }
 
 
 void Company::print_projects(Params)
 {
-    if(all_projects_.empty())
-     {
-         std::cout << "None" << std::endl;
-         return;
-     }
+    if( all_projects_in_order_.empty() )
+    {
+        std::cout << "None" << std::endl;
+        return;
+    }
 
-    for (const auto& project_pair : all_projects_)
-            {
-                const std::string& project_id = project_pair.first;
-                const std::vector<std::shared_ptr<Project>>& projects = project_pair.second;
-
-                for (const auto& project : projects)
-                {
-                    std::cout << project_id << " : ";
-                    project->get_start_date().print(); // Tulosta aloituspäivämäärä
-                    std::cout << " - ";
-
-                    if (project->is_closed())
-                    {
-                        project->get_end_date().print(); // Tulosta sulkemispäivämäärä
-                    }
-
-                    std::cout << std::endl;
-                }
-            }
-
+    for(Project* project : all_projects_in_order_) {
+        std::string id = project->get_id();
+        project->print_date_info(id);
+    }
 
 }
 
 void Company::add_requirement(Params params)
 {
-    if (params.size() != 2) {
-            std::cout << NOT_NUMERIC << std::endl;
-            return;
-        }
 
-        std::string project_id = params[0];
-        std::string requirement = params[1];
-
-        auto project_it = all_projects_.find(project_id);
-        if (project_it == all_projects_.end()) {
-            std::cout << CANT_FIND << project_id << std::endl;
-            return;
-        }
-
-        auto& project = project_it->second;
-
-        for (auto& p : project) {
-            if (p->add_requirement(requirement)) {
-                std::cout << REQUIREMENT_ADDED << project_id << std::endl;
-
-                // Tarkista, jos uusi vaatimus tekee jonkin työntekijän pätevyyden
-                // epäkelpoiseksi ja poista hänet projektista
-                std::vector<std::string> unqualified_employees = p->update_employees_qualification();
-                if (!unqualified_employees.empty()) {
-                    std::cout << NOT_QUALIFIED;
-                    for (const auto& employee : unqualified_employees) {
-                        std::cout << employee << " ";
-                    }
-                    std::cout << std::endl;
-                }
-                return;
-            }
-        }
-
-        std::cout << ALREADY_EXISTS << project_id << std::endl;
 
 }
 
@@ -275,3 +231,14 @@ void Company::print_active_staff(Params)
 
 
 
+bool Company::is_id_in_container(const std::string& id,
+                                    const std::map<std::string, Project*>
+                                    container) const
+{
+    if (container.find(id) == container.end())
+    {
+        std::cout << CANT_FIND << id << std::endl;
+        return false;
+    }
+    return true;
+}

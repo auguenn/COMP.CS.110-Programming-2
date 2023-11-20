@@ -20,15 +20,6 @@ Project::~Project()
     //std::cout << "Project " << id_ << " destructed." << std::endl;
 }
 
-Date Project::get_start_date() const
-{
-    return start_;
-}
-
-Date Project::get_end_date() const
-{
-    return end_;
-}
 
 std::string Project::get_id() const
 {
@@ -44,6 +35,19 @@ void Project::close_project(const Date& end)
 {
     end_ = end;
     is_closed_ = true;
+}
+
+void Project::print_date_info(const std::string& pre_text) const
+{
+    std::cout << pre_text << " : ";
+    start_.print();
+    std::cout << " - ";
+    // Checking if the project has ended. If ended, print ending date.
+    if (not end_.is_default())
+    {
+        end_.print();
+    }
+    std::cout << std::endl;
 }
 
 bool Project::is_employee_qualified(const Employee& employee)

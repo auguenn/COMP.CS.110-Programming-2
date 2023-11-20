@@ -156,20 +156,9 @@ public:
      */
     void print_active_staff(Params);
 
-    /**
-     * @brief check_employee_exists
-     * @param employee_id
-     * @return tosi, jos annettu työntekijätunnus löytyy
-     */
-    bool check_employee_exists(std::string employee_id) const;
 
 
-    /**
-     * @brief check_project_exists
-     * @param project_id
-     * @return tosi, jos annettu projektitunnus löytyy
-     */
-    bool check_project_exists(std::string project_id) const;
+
 
 private:
     /**
@@ -180,9 +169,15 @@ private:
 
     // More attributes and private methods
     // A database to store the projects
-    std::map<std::string, std::vector<std::shared_ptr<Project>>> all_projects_;
-    std::map<std::string, std::vector<std::shared_ptr<Project>>> current_projects_;
+    std::map<std::string, Project*> all_projects_;
+    std::map<std::string, Project*> current_projects_;
 
+   // Container for all projects in chronological order.
+    std::vector<Project*> all_projects_in_order_;
+
+
+    bool is_id_in_container(const std::string& id,
+                             const std::map<std::string, Project*> container) const;
 
 };
 
