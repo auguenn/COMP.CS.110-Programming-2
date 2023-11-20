@@ -141,11 +141,6 @@ void Company::print_current_staff(Params)
 
 void Company::create_project(Params params)
 {
-    if (params.empty()) {
-        std::cout << NOT_NUMERIC << std::endl;
-        return;
-    }
-
     const std::string& project_id = params[0];
     if (all_projects_.count(project_id) > 0) {
         std::cout << ALREADY_EXISTS << project_id << std::endl;
@@ -154,16 +149,12 @@ void Company::create_project(Params params)
 
     auto new_project = std::make_shared<Project>(project_id, Utils::today);
     all_projects_[project_id].push_back(new_project);
+    current_projects_[project_id].push_back(new_project);
     std::cout << PROJECT_CREATED << std::endl;
 }
 
 void Company::close_project(Params params)
 {
-    if (params.empty()) {
-            std::cout << NOT_NUMERIC << std::endl;
-            return;
-        }
-
         const std::string& project_id = params[0];
         if (all_projects_.count(project_id) == 0) {
             std::cout << CANT_FIND << project_id << std::endl;
@@ -182,6 +173,7 @@ void Company::close_project(Params params)
         }
 
         project->close_project(Utils::today);
+        current_projects_.erase(project_id);
         std::cout << PROJECT_CLOSED << std::endl;
 
 }
@@ -255,10 +247,11 @@ void Company::add_requirement(Params params)
 
 }
 
-void Company::assign(Params params)
-{
+
+void Company::assign(Params params) {
 
 }
+
 
 void Company::print_project_info(Params params)
 {

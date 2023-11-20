@@ -35,12 +35,14 @@ bool Project::is_closed()
     return is_closed_;
 }
 
-void Project::close_project(const Date& end) {
+void Project::close_project(const Date& end)
+{
     end_ = end;
     is_closed_ = true;
 }
 
-bool Project::is_employee_qualified(const Employee& employee) {
+bool Project::is_employee_qualified(const Employee& employee)
+{
     for (const auto& req : requirements_) {
         if (!employee.has_skill(req)) {
             return false;
@@ -50,10 +52,13 @@ bool Project::is_employee_qualified(const Employee& employee) {
 }
 
 bool Project::is_employee_in_project(const std::shared_ptr<Employee>& employee) const {
-    return std::find(assigned_staff_.begin(), assigned_staff_.end(), employee) != assigned_staff_.end();
+    return std::find_if(assigned_staff_.begin(), assigned_staff_.end(), [&](const std::shared_ptr<Employee>& emp) {
+        return emp == employee;
+    }) != assigned_staff_.end();
 }
 
-std::vector<std::string> Project::update_employees_qualification() {
+std::vector<std::string> Project::update_employees_qualification()
+{
     std::vector<std::string> unqualified_employees;
     for (auto it = assigned_staff_.begin(); it != assigned_staff_.end(); ) {
         if (!is_employee_qualified(**it)) {
@@ -66,7 +71,8 @@ std::vector<std::string> Project::update_employees_qualification() {
     return unqualified_employees;
 }
 
-bool Project::add_requirement(const std::string& req) {
+bool Project::add_requirement(const std::string& req)
+{
     if (std::find(requirements_.begin(), requirements_.end(), req) != requirements_.end()) {
         return false; // Vaatimus on jo olemassa
     }
@@ -74,9 +80,19 @@ bool Project::add_requirement(const std::string& req) {
     return true;
 }
 
-void Project::remove_employee(const std::shared_ptr<Employee>& employee) {
+void Project::add_employee(const std::shared_ptr<Employee>& employee) {
+    assigned_staff_.push_back(employee);
+}
+
+void Project::remove_employee(const std::shared_ptr<Employee>& employee)
+{
     auto it = std::find(assigned_staff_.begin(), assigned_staff_.end(), employee);
     if (it != assigned_staff_.end()) {
         assigned_staff_.erase(it);
     }
+}
+
+
+std::vector<std::string> Project::get_requirements() const {
+    return requirements_;
 }

@@ -42,6 +42,7 @@ public:
     // More public methods
     Date get_start_date() const;
     Date get_end_date() const;
+    std::vector<std::string> get_requirements() const;
 
     bool is_closed();
     bool is_employee_qualified(const Employee& employee);
@@ -51,6 +52,7 @@ public:
     void remove_employee(const std::shared_ptr<Employee>& employee);
     std::vector<std::string> update_employees_qualification();
     bool is_employee_in_project(const std::shared_ptr<Employee>& employee) const;
+    void add_employee(const std::shared_ptr<Employee>& employee) ;
 
 private:
     /**

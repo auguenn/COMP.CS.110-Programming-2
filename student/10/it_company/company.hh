@@ -156,6 +156,21 @@ public:
      */
     void print_active_staff(Params);
 
+    /**
+     * @brief check_employee_exists
+     * @param employee_id
+     * @return tosi, jos annettu työntekijätunnus löytyy
+     */
+    bool check_employee_exists(std::string employee_id) const;
+
+
+    /**
+     * @brief check_project_exists
+     * @param project_id
+     * @return tosi, jos annettu projektitunnus löytyy
+     */
+    bool check_project_exists(std::string project_id) const;
+
 private:
     /**
      * Obvious containers
@@ -166,8 +181,11 @@ private:
     // More attributes and private methods
     // A database to store the projects
     std::map<std::string, std::vector<std::shared_ptr<Project>>> all_projects_;
+    std::map<std::string, std::vector<std::shared_ptr<Project>>> current_projects_;
 
-    // Private comparison method to compare the starting date of the care periods
+
+
+    // Private comparison method to compare the starting date of the projects
     static bool compare_start_date(std::shared_ptr<Project> project_1,
                                       std::shared_ptr<Project> project_2);
 };
