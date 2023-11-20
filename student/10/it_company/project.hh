@@ -43,6 +43,7 @@ public:
     Date get_start_date() const;
     Date get_end_date() const;
     std::vector<std::string> get_requirements() const;
+    std::string get_id() const;
 
     bool is_closed();
     bool is_employee_qualified(const Employee& employee);

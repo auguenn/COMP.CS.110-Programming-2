@@ -30,6 +30,11 @@ Date Project::get_end_date() const
     return end_;
 }
 
+std::string Project::get_id() const
+{
+    return id_;
+}
+
 bool Project::is_closed()
 {
     return is_closed_;
