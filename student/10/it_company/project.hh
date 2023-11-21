@@ -44,16 +44,16 @@ public:
     std::string get_id() const;
 
     bool is_closed();
+    void close_project(const Date& end);
     // Print start and end dates. Param pre_text gets printed before the dates.
     void print_date_info(const std::string& pre_text) const;
+    void add_employee(std::string specialist_id);
+
+
     bool is_employee_qualified(const Employee& employee);
     bool add_requirement(const std::string& req);
+    bool is_employee_in_project(const std::string employee);
 
-    void close_project(const Date& end);
-    void remove_employee(const std::shared_ptr<Employee>& employee);
-    std::vector<std::string> update_employees_qualification();
-    bool is_employee_in_project(const std::shared_ptr<Employee>& employee) const;
-    void add_employee(const std::shared_ptr<Employee>& employee) ;
 
 private:
     /**
@@ -67,8 +67,8 @@ private:
     // A boolean attribute to check if the period is closed or not
     bool is_closed_;
 
-    std::vector<std::shared_ptr<Employee>> assigned_staff_;
-    std::vector<std::string> requirements_;
+   std::set<std::string> assigned_staff_;
+   std::vector<std::string> requirements_;
 
 
 };

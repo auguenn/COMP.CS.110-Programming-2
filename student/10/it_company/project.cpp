@@ -50,6 +50,7 @@ void Project::print_date_info(const std::string& pre_text) const
     std::cout << std::endl;
 }
 
+
 bool Project::is_employee_qualified(const Employee& employee)
 {
     for (const auto& req : requirements_) {
@@ -60,25 +61,14 @@ bool Project::is_employee_qualified(const Employee& employee)
     return true;
 }
 
-bool Project::is_employee_in_project(const std::shared_ptr<Employee>& employee) const {
-    return std::find_if(assigned_staff_.begin(), assigned_staff_.end(), [&](const std::shared_ptr<Employee>& emp) {
-        return emp == employee;
-    }) != assigned_staff_.end();
+bool Project::is_employee_in_project(const std::string employee) {
+    if( assigned_staff_.find(employee) == assigned_staff_.end()) {
+       return false;
+    }
+   return true;
 }
 
-std::vector<std::string> Project::update_employees_qualification()
-{
-    std::vector<std::string> unqualified_employees;
-    for (auto it = assigned_staff_.begin(); it != assigned_staff_.end(); ) {
-        if (!is_employee_qualified(**it)) {
-            unqualified_employees.push_back((*it)->get_id());
-            it = assigned_staff_.erase(it);
-        } else {
-            ++it;
-        }
-    }
-    return unqualified_employees;
-}
+
 
 bool Project::add_requirement(const std::string& req)
 {
@@ -89,16 +79,8 @@ bool Project::add_requirement(const std::string& req)
     return true;
 }
 
-void Project::add_employee(const std::shared_ptr<Employee>& employee) {
-    assigned_staff_.push_back(employee);
-}
-
-void Project::remove_employee(const std::shared_ptr<Employee>& employee)
-{
-    auto it = std::find(assigned_staff_.begin(), assigned_staff_.end(), employee);
-    if (it != assigned_staff_.end()) {
-        assigned_staff_.erase(it);
-    }
+void Project::add_employee(const std::string employee) {
+    assigned_staff_.insert(employee);
 }
 
 

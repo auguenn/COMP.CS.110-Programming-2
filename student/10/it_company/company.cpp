@@ -208,8 +208,45 @@ void Company::add_requirement(Params params)
 }
 
 
-
 void Company::assign(Params params) {
+
+    std::string staff_id = params.at(0);
+    std::string project_id = params.at(1);
+
+    // Check if the staff is in the company
+    if (all_staff_.find(staff_id) == all_staff_.end()) {
+        return;
+    }
+
+    // Check if the project exists
+    else if (!is_id_in_container(project_id, all_projects_)) {
+        return;
+    }
+
+    // Check if the project is closed
+    if (current_projects_.find(project_id) == current_projects_.end()) {
+        std::cout << CANT_ASSIGN << staff_id << std::endl;
+        return;
+    }
+
+   Project* project = current_projects_.at(project_id);
+
+   // Check if the employee is already assigned to the project
+   if (!project->is_employee_in_project(staff_id)) {
+       std::cout << CANT_ASSIGN << staff_id << std::endl;
+       return;
+   }
+
+   // Check if the employee has at least one required skill for the project
+   if (!project ->is_employee_qualified(staff_id)) {
+       std::cout << CANT_ASSIGN << staff_id << std::endl;
+       return;
+   }
+
+   // Assign staff to the project
+   project->add_employee(staff_id);
+
+   std::cout << STAFF_ASSIGNED << project_id << std::endl;
 
 }
 
@@ -228,7 +265,6 @@ void Company::print_active_staff(Params)
 {
 
 }
-
 
 
 bool Company::is_id_in_container(const std::string& id,
