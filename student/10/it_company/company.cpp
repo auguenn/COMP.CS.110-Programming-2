@@ -213,7 +213,7 @@ void Company::print_projects(Params)
 
 void Company::add_requirement(Params params)
 {
-   /*td::string project_id = params.at(0);
+    std::string project_id = params.at(0);
     std::string requirement = params.at(1);
 
     // Tarkista, onko projekti olemassa ja suljettu
@@ -235,7 +235,7 @@ void Company::add_requirement(Params params)
             }
         } else {
             std::cout << REQUIREMENT_ADDED << project_id << std::endl;
-        }*/
+        }
 
 }
 
@@ -250,7 +250,7 @@ void Company::assign(Params params) {
     }
 
     // Check if the project exists
-    else if (!is_id_in_container(project_id, all_projects_)) {
+    if (!is_id_in_container(project_id, all_projects_)) {
         return;
     }
 
@@ -265,22 +265,16 @@ void Company::assign(Params params) {
     // Get the employee object based on the ID
     Employee* employee = get_employee_by_id(staff_id);
 
-    // Check if the employee exists
-    if (employee == nullptr) {
-        return;
-    }
-
-    // Check if the employee has at least one required skill for the project
-    if (!project->is_employee_qualified(*employee)) {
-        std::cout << CANT_ASSIGN << staff_id << std::endl;
-        return;
-    }
-
     // Check if the employee is already assigned to the project
-    if (!project->is_employee_in_project(staff_id)) {
+    if (project->is_employee_in_project(staff_id)) {
         std::cout << CANT_ASSIGN << staff_id << std::endl;
         return;
     }
+    // Check if the employee has at least one required skill for the project
+      if (!project->is_employee_qualified(*employee)) {
+          std::cout << CANT_ASSIGN << staff_id << std::endl;
+          return;
+      }
 
     // Assign staff to the project
     project->add_employee(*employee);
