@@ -31,6 +31,12 @@ Company::~Company()
         }
 
 }
+Employee* Company::get_employee_by_id(const std::string& employee_id) {
+    if (current_staff_.find(employee_id) != current_staff_.end()) {
+        return current_staff_[employee_id];
+    }
+    return nullptr;
+}
 
 void Company::set_date(Params params)
 {
@@ -140,6 +146,7 @@ void Company::print_current_staff(Params)
 void Company::create_project(Params params)
 {
     const std::string& project_id = params.at(0);
+
     // Checking if there already is or has been a project in company with the same name.
     if (all_projects_.find(project_id) != all_projects_.end())
     {
@@ -150,14 +157,16 @@ void Company::create_project(Params params)
     // If given project is a new project, create a new project object
     // and add it to the all_projects_ -container
     Project* new_project = nullptr;
-        new_project = new Project(project_id, Utils::today);
-        all_projects_.insert({project_id, new_project});
-        // Lets create a new project for the new project and add it to company's
-        // chronological register
-        all_projects_in_order_.push_back(new_project);
-        // Add project to current projects
-        current_projects_.insert({project_id, new_project});
-        std::cout << PROJECT_CREATED << std::endl;
+
+    new_project = new Project(project_id, Utils::today);
+    all_projects_.insert({project_id, new_project});
+
+    // Add the project to company's chronological register
+    all_projects_in_order_.push_back(new_project);
+
+    // Add project to current projects
+    current_projects_.insert({project_id, new_project});
+    std::cout << PROJECT_CREATED << std::endl;
 
 
 }
@@ -201,20 +210,42 @@ void Company::print_projects(Params)
 
 }
 
+
 void Company::add_requirement(Params params)
 {
+   /*td::string project_id = params.at(0);
+    std::string requirement = params.at(1);
 
+    // Tarkista, onko projekti olemassa ja suljettu
+        if (!is_id_in_container(project_id, all_projects_) ||
+            !is_id_in_container(project_id, current_projects_)) {
+            return;
+        }
+
+        Project* project = current_projects_.at(project_id);
+
+        // Tarkista, onko vaatimus jo olemassa
+        if (project->add_requirement(requirement)) {
+            std::cout << REQUIREMENT_ADDED << project_id << std::endl;
+
+            // Päivitä työntekijöiden pätevyys, jos projektiin on lisätty uusi vaatimus
+            std::vector<std::string> unqualified_employees = project->update_employees_qualification();
+            for (const auto& employee : unqualified_employees) {
+                std::cout << NOT_QUALIFIED << employee << std::endl;
+            }
+        } else {
+            std::cout << REQUIREMENT_ADDED << project_id << std::endl;
+        }*/
 
 }
 
 
 void Company::assign(Params params) {
-
     std::string staff_id = params.at(0);
     std::string project_id = params.at(1);
 
     // Check if the staff is in the company
-    if (all_staff_.find(staff_id) == all_staff_.end()) {
+    if (current_staff_.find(staff_id) == current_staff_.end()) {
         return;
     }
 
@@ -229,26 +260,34 @@ void Company::assign(Params params) {
         return;
     }
 
-   Project* project = current_projects_.at(project_id);
+    Project* project = current_projects_.at(project_id);
 
-   // Check if the employee is already assigned to the project
-   if (!project->is_employee_in_project(staff_id)) {
-       std::cout << CANT_ASSIGN << staff_id << std::endl;
-       return;
-   }
+    // Get the employee object based on the ID
+    Employee* employee = get_employee_by_id(staff_id);
 
-   // Check if the employee has at least one required skill for the project
-   if (!project ->is_employee_qualified(staff_id)) {
-       std::cout << CANT_ASSIGN << staff_id << std::endl;
-       return;
-   }
+    // Check if the employee exists
+    if (employee == nullptr) {
+        return;
+    }
 
-   // Assign staff to the project
-   project->add_employee(staff_id);
+    // Check if the employee has at least one required skill for the project
+    if (!project->is_employee_qualified(*employee)) {
+        std::cout << CANT_ASSIGN << staff_id << std::endl;
+        return;
+    }
 
-   std::cout << STAFF_ASSIGNED << project_id << std::endl;
+    // Check if the employee is already assigned to the project
+    if (!project->is_employee_in_project(staff_id)) {
+        std::cout << CANT_ASSIGN << staff_id << std::endl;
+        return;
+    }
 
+    // Assign staff to the project
+    project->add_employee(*employee);
+
+    std::cout << STAFF_ASSIGNED << project_id << std::endl;
 }
+
 
 
 void Company::print_project_info(Params params)

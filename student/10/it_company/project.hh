@@ -40,19 +40,17 @@ public:
     ~Project();
 
     // More public methods
-    std::vector<std::string> get_requirements() const;
     std::string get_id() const;
+    std::vector<std::string> update_employees_qualification();
 
     bool is_closed();
     void close_project(const Date& end);
     // Print start and end dates. Param pre_text gets printed before the dates.
     void print_date_info(const std::string& pre_text) const;
-    void add_employee(std::string specialist_id);
-
-
+    void add_employee(Employee& staff_id);
+    bool is_employee_in_project(const std::string& employee);
     bool is_employee_qualified(const Employee& employee);
     bool add_requirement(const std::string& req);
-    bool is_employee_in_project(const std::string employee);
 
 
 private:

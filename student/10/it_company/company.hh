@@ -156,6 +156,8 @@ public:
      */
     void print_active_staff(Params);
 
+    Employee* get_employee_by_id(const std::string& id);
+
 
 
 
