@@ -288,6 +288,45 @@ void Company::assign(Params params) {
 
 void Company::print_project_info(Params params)
 {
+    std::string project_id = params.at(0);
+
+        if (all_projects_.find(project_id) == all_projects_.end())
+        {
+            std::cout << CANT_FIND << project_id << std::endl;
+            return;
+        }
+
+        Project* project = all_projects_.at(project_id);
+
+        project->print_date_info(project_id);
+        std::cout << "** Requirements: ";
+            const auto& requirements = project->get_requirements();
+            if (requirements.empty()) {
+                std::cout << "None" << std::endl;
+            } else {
+                for (size_t i = 0; i < requirements.size(); ++i) {
+                    std::cout << requirements[i];
+                    if (i != requirements.size() - 1) {
+                        std::cout << ", ";
+                    }
+                }
+                std::cout << std::endl;
+            }
+
+            std::cout << "** Staff: ";
+            const auto& staff = project->get_assigned_staff();
+            if (staff.empty()) {
+                std::cout << "None" << std::endl;
+            } else {
+                size_t count = 0;
+                for (const auto& employee : staff) {
+                    std::cout << employee;
+                    if (++count < staff.size()) {
+                        std::cout << ", ";
+                    }
+                }
+                std::cout << std::endl;
+            }
 
 }
 
@@ -306,8 +345,6 @@ void Company::print_active_staff(Params)
         std::cout << employee << std::endl;
     }
 }
-
-
 
 bool Company::is_id_in_container(const std::string& id,
                                     const std::map<std::string, Project*>

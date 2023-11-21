@@ -42,6 +42,7 @@ public:
     // More public methods
     std::string get_id() const;
     std::vector<std::string> update_employees_qualification();
+    std::vector<std::string> get_requirements();
 
     bool is_closed();
     void close_project(const Date& end);

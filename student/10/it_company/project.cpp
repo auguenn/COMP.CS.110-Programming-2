@@ -108,7 +108,9 @@ std::set<std::string> Project::get_assigned_staff() {
     return assigned_staff_;
 }
 
-
+std::vector<std::string> Project::get_requirements() {
+    return requirements_;
+}
 
 
 

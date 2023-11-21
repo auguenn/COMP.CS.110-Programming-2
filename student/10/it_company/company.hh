@@ -157,7 +157,6 @@ public:
     void print_active_staff(Params);
 
     Employee* get_employee_by_id(const std::string& id);
-    std::set<std::string> get_active_staff();
     void update_active_staff();
 
 
