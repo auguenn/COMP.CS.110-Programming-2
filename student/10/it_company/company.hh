@@ -157,8 +157,8 @@ public:
     void print_active_staff(Params);
 
     Employee* get_employee_by_id(const std::string& id);
-
-
+    std::set<std::string> get_active_staff();
+    void update_active_staff();
 
 
 
@@ -168,6 +168,7 @@ private:
      */
     std::map<std::string, Employee*> current_staff_;
     std::map<std::string, Employee*> all_staff_;
+    std::set<std::string> all_active_staff_;
 
     // More attributes and private methods
     // A database to store the projects

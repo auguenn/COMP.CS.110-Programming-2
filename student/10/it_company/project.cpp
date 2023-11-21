@@ -104,6 +104,10 @@ bool Project::add_requirement(const std::string& req)
     return true;
 }
 
+std::set<std::string> Project::get_assigned_staff() {
+    return assigned_staff_;
+}
+
 
 
 

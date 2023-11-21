@@ -38,6 +38,7 @@ Employee* Company::get_employee_by_id(const std::string& employee_id) {
     return nullptr;
 }
 
+
 void Company::set_date(Params params)
 {
     std::string day = params.at(0);
@@ -278,6 +279,7 @@ void Company::assign(Params params) {
 
     // Assign staff to the project
     project->add_employee(*employee);
+    all_active_staff_.insert(staff_id);
 
     std::cout << STAFF_ASSIGNED << project_id << std::endl;
 }
@@ -293,11 +295,18 @@ void Company::print_employee_info(Params params)
 {
 
 }
-
 void Company::print_active_staff(Params)
 {
+    if (all_active_staff_.empty()) {
+        std::cout << "None" << std::endl;
+        return;
+    }
 
+    for (const auto& employee : all_active_staff_) {
+        std::cout << employee << std::endl;
+    }
 }
+
 
 
 bool Company::is_id_in_container(const std::string& id,

@@ -51,6 +51,7 @@ public:
     bool is_employee_in_project(const std::string& employee);
     bool is_employee_qualified(const Employee& employee);
     bool add_requirement(const std::string& req);
+    std::set<std::string> get_assigned_staff();
 
 
 private:
