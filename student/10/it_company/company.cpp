@@ -234,15 +234,28 @@ void Company::add_requirement(Params params) {
         return;
     }
 
-    //std::vector<std::string> unqualified_employees = project->update_employees_qualification();
 
-    /*if (!unqualified_employees.empty()) {
-        for (const auto& employee : unqualified_employees) {
-            std::cout << NOT_QUALIFIED << employee << std::endl;
-            project->remove_employee(employee); // Lisää tämä funktio, jotta epäpätevät poistetaan
-        }
-    }*/
     std::cout << REQUIREMENT_ADDED << project_id << std::endl;
+
+    // Käy läpi kaikki työntekijät
+       for (auto& staff_pair : current_staff_) {
+           Employee* employee = staff_pair.second;
+           bool has_required_skill = false;
+
+           // Tarkista työntekijän taidot projektin vaatimusten suhteen
+           for (const auto& skill : employee->get_skills()) {
+               if (project->has_requirement(skill)) {
+                   has_required_skill = true;
+                   break;
+               }
+           }
+
+           // Jos työntekijällä ei ole vaadittua taitoa, poista hänet projektista
+           if (!has_required_skill) {
+               project->remove_employee(employee);
+               std::cout << NOT_QUALIFIED << std::endl;
+           }
+       }
 }
 
 
@@ -272,16 +285,11 @@ void Company::assign(Params params) {
     // Get the employee object based on the ID
     Employee* employee = get_employee_by_id(staff_id);
 
-    /* Check if the employee is already assigned to the project
+    // Check if the employee is already assigned to the project
     if (project->is_employee_in_project(staff_id)) {
         std::cout << CANT_ASSIGN << staff_id << std::endl;
         return;
     }
-    Check if the employee has at least one required skill for the project
-      if (!project->is_employee_qualified(*employee)) {
-          std::cout << CANT_ASSIGN << staff_id << std::endl;
-          return;
-      }*/
 
     // Assign staff to the project
     project->add_employee(employee);

@@ -89,6 +89,8 @@ public:
 
     void print_projects(const std::string& pre_text) const;
 
+    std::set<std::string> get_skills() const;
+
 
     /**
      * @brief operator<

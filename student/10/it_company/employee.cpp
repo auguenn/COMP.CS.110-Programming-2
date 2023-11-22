@@ -45,6 +45,10 @@ std::vector<std::string> Employee::get_projects() const
     return result;
 }
 
+std::set<std::string> Employee::get_skills() const {
+    return skills_;
+}
+
 void Employee::add_project(const std::string& name,
                           Date start)
 {

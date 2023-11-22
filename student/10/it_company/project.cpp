@@ -26,10 +26,7 @@ std::string Project::get_id() const
     return id_;
 }
 
-void Project::set_end_date(const Date &end)
-{
-    end_ = end;
-}
+
 
 void Project::set_end_date_for_assigned_staff(const Date& end_date) {
     for (Employee* employee : assigned_staff_) {
@@ -77,42 +74,16 @@ void Project::close_project(const Date& end)
 
 
 
-/*bool Project::is_employee_in_project(const std::string& employee) {
-    if( assigned_staff_.find(employee) == assigned_staff_.end()) {
-       return false;
-    }
-   return true;
-}
 
-bool Project::is_employee_qualified(const Employee& employee) {
-    if (requirements_.empty()) {
-        return true;
-    }
-    int req_count = 0;
-
-    while (req_count != 0) {
-        for (const auto& req : requirements_) {
-            if (!employee.has_skill(req)) {
-                return false;
+bool Project::is_employee_in_project(const std::string& employee) {
+    for (const auto& emp : assigned_staff_) {
+            if (emp->get_id() == employee) {
+                return true;
             }
-            req_count += 1;
         }
-    }
-
-
-    return true;
+        return false;
 }
 
-void Project::add_employee(Employee& employee) {
-    if (is_employee_qualified(employee)) {
-        assigned_staff_.insert(employee.get_id());
-    }
-}*/
-
-/*void Project::remove_employee(const std::string& employee_id) {
-    assigned_staff_.rem(employee_id);
-}
-*/
 
 
 bool Project::add_requirement(const std::string& req)
@@ -130,7 +101,10 @@ Date Project::get_start_date() const {
        return start_;
    }
 
-Date Project::get_end_date() const {
-       return end_;
-   }
+void Project::remove_employee(Employee* staff_id) {
+    assigned_staff_.erase(staff_id);
+}
 
+bool Project::has_requirement(const std::string& skill) {
+    return std::find(requirements_.begin(), requirements_.end(), skill) != requirements_.end();
+}
