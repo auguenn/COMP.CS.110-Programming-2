@@ -53,6 +53,7 @@ void Project::print_date_info(const std::string& pre_text) const
 }
 
 std::vector<std::string> Project::get_requirements() {
+    std::sort(requirements_.begin(), requirements_.end());
     return requirements_;
 }
 
