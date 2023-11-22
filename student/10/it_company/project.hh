@@ -149,6 +149,22 @@ public:
     void print_date_info(const std::string& pre_text) const;
 
 
+    /**
+     * @brief : Print the project's requirements
+     * @param :  None
+     * @return : None
+     */
+    void print_requirements() const;
+
+
+    /**
+     * @brief : Print the project's staff
+     * @param : None
+     * @return : None
+     */
+    void print_staff() const;
+
+
 
 private:
     /**

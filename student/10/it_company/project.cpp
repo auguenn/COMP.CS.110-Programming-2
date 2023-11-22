@@ -179,3 +179,54 @@ void Project::print_date_info(const std::string& pre_text) const
     std::cout << std::endl;
 }
 
+void Project::print_requirements() const
+{
+    // Change the requirements vector to a set
+    std::set<std::string> reqSet(requirements_.begin(), requirements_.end());
+
+    // If there is no requirements
+    if( requirements_.empty() )
+    {
+        std::cout << NONE << std::endl;
+        return;
+    }
+
+    bool first = true;
+    for (const auto& req : reqSet)
+    {
+        if (!first) {
+            std::cout << ", ";
+        }
+
+        // If the last item, do not print the comma
+        std::cout << req;
+        first = false;
+    }
+
+    std::cout << std::endl;
+}
+
+
+void Project::print_staff() const
+{
+    // If there is no staff
+    if (assigned_staff_.empty())
+    {
+        std::cout << NONE << std::endl;
+    }
+    else
+    {
+        size_t count = 0;
+        for (const auto& employee : assigned_staff_)
+        {
+            std::cout << employee->get_id();
+            if (++count < assigned_staff_.size())
+            {
+                std::cout << ", ";
+            }
+        }
+
+        std::cout << std::endl;
+    }
+}
+

@@ -354,49 +354,10 @@ void Company::print_project_info(Params params)
 
     project->print_date_info(project_id);
     std::cout << "** Requirements: ";
-    const auto& requirements = project->get_requirements();
-
-    // If there is no requirements
-    if (requirements.empty())
-    {
-        std::cout << NONE<< std::endl;
-    }
-    else
-    {
-        for (size_t i = 0; i < requirements.size(); ++i)
-        {
-            std::cout << requirements[i];
-            if (i != requirements.size() - 1)
-            {
-                std::cout << ", ";
-            }
-        }
-
-        std::cout << std::endl;
-    }
+    project->print_requirements();
 
     std::cout << "** Staff: ";
-    const auto& staff = project->get_assigned_staff();
-
-    // If there is no staff
-    if (staff.empty())
-    {
-        std::cout << NONE << std::endl;
-    }
-    else
-    {
-        size_t count = 0;
-        for (const auto& employee : staff)
-        {
-            std::cout << employee->get_id();
-            if (++count < staff.size())
-            {
-                std::cout << ", ";
-            }
-        }
-
-        std::cout << std::endl;
-    }
+    project->print_staff();
 }
 
 
