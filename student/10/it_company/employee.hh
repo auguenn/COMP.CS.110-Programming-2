@@ -91,6 +91,8 @@ public:
 
     std::set<std::string> get_skills() const;
 
+    bool is_assigned_to_project(const std::string& project_id) const;
+
 
     /**
      * @brief operator<

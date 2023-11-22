@@ -75,7 +75,8 @@ void Project::close_project(const Date& end)
 
 
 
-bool Project::is_employee_in_project(const std::string& employee) {
+bool Project::is_employee_in_project(const std::string& employee)
+{
     for (const auto& emp : assigned_staff_) {
             if (emp->get_id() == employee) {
                 return true;
@@ -86,15 +87,43 @@ bool Project::is_employee_in_project(const std::string& employee) {
 
 
 
-bool Project::add_requirement(const std::string& req)
+void Project::add_requirement(const std::string& req)
 {
+    // Check if the requirement exists
     if (std::find(requirements_.begin(), requirements_.end(), req) != requirements_.end()) {
-        return false; // Vaatimus on jo olemassa
+        return;
     }
-    //update_employees_qualification();
+
+    // Add requirement to the project
     requirements_.push_back(req);
 
-    return true;
+    // Tarkista, onko uusi vaatimus aiheuttanut työntekijän poistamisen projektista
+    if (!assigned_staff_.empty()) {
+        for (auto it = assigned_staff_.begin(); it != assigned_staff_.end();) {
+            bool has_required_skill = false;
+            Employee* employee = *it;
+
+            // Tarkista, kuuluuko työntekijä projektin työntekijöihin
+            if (!employee->is_assigned_to_project(id_)) {
+                ++it;
+                continue;
+            }
+
+            for (const auto& skill : employee->get_skills()) {
+                if (has_requirement(skill)) {
+                    has_required_skill = true;
+                    break;
+                }
+            }
+
+            if (!has_required_skill) {
+                std::cout << NOT_QUALIFIED << employee->get_id() << std::endl;
+                it = assigned_staff_.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
 }
 
 Date Project::get_start_date() const {

@@ -229,33 +229,9 @@ void Company::add_requirement(Params params) {
     Project* project = current_projects_.at(project_id);
 
     // Tarkista, onko vaatimus jo olemassa
-    if (!project->add_requirement(requirement)) {
+    project->add_requirement(requirement);
         std::cout << REQUIREMENT_ADDED << project_id << std::endl;
-        return;
-    }
 
-
-    std::cout << REQUIREMENT_ADDED << project_id << std::endl;
-
-    // Käy läpi kaikki työntekijät
-       for (auto& staff_pair : current_staff_) {
-           Employee* employee = staff_pair.second;
-           bool has_required_skill = false;
-
-           // Tarkista työntekijän taidot projektin vaatimusten suhteen
-           for (const auto& skill : employee->get_skills()) {
-               if (project->has_requirement(skill)) {
-                   has_required_skill = true;
-                   break;
-               }
-           }
-
-           // Jos työntekijällä ei ole vaadittua taitoa, poista hänet projektista
-           if (!has_required_skill) {
-               project->remove_employee(employee);
-               std::cout << NOT_QUALIFIED << std::endl;
-           }
-       }
 }
 
 
@@ -266,6 +242,7 @@ void Company::assign(Params params) {
 
     // Check if the staff is in the company
     if (current_staff_.find(staff_id) == current_staff_.end()) {
+        std::cout << CANT_FIND << staff_id << std::endl;
         return;
     }
 

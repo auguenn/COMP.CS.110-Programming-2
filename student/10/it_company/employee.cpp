@@ -157,6 +157,11 @@ void Employee::print_projects(const std::string& pre_text) const {
 
 }
 
+bool Employee::is_assigned_to_project(const std::string& project_id) const {
+    return projects_.find(project_id) != projects_.end();
+}
+
+
 
 bool Employee::operator<(const Employee &rhs) const
 {

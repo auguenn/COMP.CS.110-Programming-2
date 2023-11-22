@@ -56,7 +56,7 @@ public:
     bool has_requirement(const std::string& skill);
 
     bool is_employee_in_project(const std::string& employee);
-    bool add_requirement(const std::string& req);
+    void add_requirement(const std::string& req);
    ;
     std::set<Employee*> get_assigned_staff();
 
