@@ -1,3 +1,14 @@
+/* IT-company
+ *
+ *
+ * Program author:
+ * Name: Enna Augustin
+ * Student number: 50235634
+ * UserID: xxenau
+ * E-Mail: enna.augustin@tuni.fi
+ *
+*/
+
 #include "date.hh"
 #include "utils.hh"
 #include <iostream>
@@ -78,11 +89,6 @@ void Date::advance(unsigned int days)
     }
 }
 
-std::string Date::to_string() const {
-        std::stringstream ss;
-        ss << day_ << "." << month_ << "." << year_;
-        return ss.str();
-    }
 
 void Date::print() const
 {
@@ -90,6 +96,14 @@ void Date::print() const
     std::cout << month_ << ".";
     std::cout << year_;
 }
+
+std::string Date::to_string() const
+{
+    std::stringstream ss;
+    ss << day_ << "." << month_ << "." << year_;
+    return ss.str();
+}
+
 
 bool Date::operator==(const Date &rhs) const
 {

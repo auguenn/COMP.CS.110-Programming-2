@@ -4,8 +4,15 @@
  * ----------
  * Class for describing an employee in an IT company.
  *
- * Note: Students can change this class, if necessary.
+ * Program author:
+ * Name: Enna Augustin
+ * Student number: 50235634
+ * UserID: xxenau
+ * E-Mail: enna.augustin@tuni.fi
+ *
  * */
+
+
 #ifndef EMPLOYEE_HH
 #define EMPLOYEE_HH
 
@@ -14,6 +21,8 @@
 #include <set>
 #include <map>
 #include <vector>
+
+const std::string NONE = "None";
 
 
 class Employee
@@ -44,6 +53,7 @@ public:
      */
     ~Employee();
 
+
     /**
      * @brief get_id
      * @return employee's id
@@ -52,22 +62,46 @@ public:
 
 
     /**
-     * @brief add_skill
-     * @param skill (name)
-     * Adds a skill for an employee
+     * @brief Gets the employee's skills
+     * @param : None
+     * @return A set of the employee's skills
+     */
+    std::set<std::string> get_skills() const;
+
+
+    /**
+     * @brief : Adds a skill for an employee
+     * @param : skill (name)
+     * @return: None
      */
     void add_skill(const std::string& skill);
 
+
     /**
-     * @brief has_skill
-     * @param : skill (name)
-     * @return true if the employee has the skill, otherwise returns false
+     * @brief : Adds a project for an employee
+     * @param : project (name)
+     * @param : Starting date
+     * @return : None
      */
-    bool has_skill(const std::string& skill) const;
+    void add_project(const std::string& name, Date start);
 
-    void remove_project(const std::string& name);
 
-    std::vector<std::string> get_projects() const;
+    /**
+     * @brief : Ends a project for an employee (sets the ending date)
+     * @param : Project (name)
+     * @param : Ending date
+     * @return : None
+     */
+    void end_project(const std::string& name, Date end);
+
+
+    /**
+     * @brief : Checks if the employee is assigned to the project
+     * @param : Project (project_id) as a referenced string
+     * @return : Truth value whether the employee is assigned to the project
+     */
+    bool is_assigned_to_project(const std::string& project_id) const;
+
 
     /**
      * @brief print_id
@@ -76,6 +110,7 @@ public:
      */
     void print_id(const std::string& pre_text) const;
 
+
     /**
      * @brief print_skills
      * Prints employee's skills, all skills in one line, separated by a comma,
@@ -83,15 +118,13 @@ public:
      */
     void print_skills() const;
 
-    void add_project(const std::string& name,
-                        Date start);
-    void end_project(const std::string& name, Date end);
 
-    void print_projects(const std::string& pre_text) const;
-
-    std::set<std::string> get_skills() const;
-
-    bool is_assigned_to_project(const std::string& project_id) const;
+    /**
+     * @brief : Prints the project info (name, starting date, ending date)
+     * @param : None
+     * @return : None
+     */
+    void print_projects() const;
 
 
     /**
@@ -112,11 +145,14 @@ private:
 
     std::set<std::string> skills_; // IT skills
 
+
+    // A struct to save the date information for an employee's projects
     struct DateRange {
         Date start_date;
         Date end_date;
     };
 
+    // A container to save the employee's projects
     std::map<std::string, DateRange> projects_;
 
 };

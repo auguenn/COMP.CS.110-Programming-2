@@ -4,7 +4,14 @@
  * ----------
  * Class for describing a date.
  *
- * Note: Students need not change this class, but they can if necessary.
+ * Program author:
+ * Name: Enna Augustin
+ * Student number: 50235634
+ * UserID: xxenau
+ * E-Mail: enna.augustin@tuni.fi
+ *
+ * Note: Added the methos to_string()
+ *
  * */
 #ifndef DATE_HH
 #define DATE_HH
@@ -70,6 +77,10 @@ public:
      */
     void print() const;
 
+    /**
+     * @brief to_string, Transforms a date object to a string
+     * @return The date as a string
+     */
     std::string to_string() const;
 
 

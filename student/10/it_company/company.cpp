@@ -1,3 +1,15 @@
+/* IT-company
+ *
+ *
+ * Program author:
+ * Name: Enna Augustin
+ * Student number: 50235634
+ * UserID: xxenau
+ * E-Mail: enna.augustin@tuni.fi
+ *
+*/
+
+
 #include "company.hh"
 #include "utils.hh"
 #include <iostream>
@@ -12,7 +24,7 @@ Company::~Company()
 {
     //std::cout << "Company destructor" << std::endl;
 
-    // TODO: Deallocate staff
+    // Deallocate staff
     for( std::map<std::string, Employee*>::iterator
              iter = all_staff_.begin();
              iter != all_staff_.end();
@@ -21,7 +33,7 @@ Company::~Company()
             delete iter->second;
         }
 
-    // TODO: Deallocate projects
+    // Deallocate projects
     for( std::map<std::string, Project*>::iterator
              iter = all_projects_.begin();
              iter != all_projects_.end();
@@ -31,10 +43,14 @@ Company::~Company()
         }
 
 }
-Employee* Company::get_employee_by_id(const std::string& employee_id) {
-    if (current_staff_.find(employee_id) != current_staff_.end()) {
+
+Employee* Company::get_employee_by_id(const std::string& employee_id)
+{
+    if (current_staff_.find(employee_id) != current_staff_.end())
+    {
         return current_staff_[employee_id];
     }
+
     return nullptr;
 }
 
@@ -57,6 +73,7 @@ void Company::set_date(Params params)
     std::cout << std::endl;
 }
 
+
 void Company::advance_date(Params params)
 {
     std::string amount = params.at(0);
@@ -70,6 +87,7 @@ void Company::advance_date(Params params)
     Utils::today.print();
     std::cout << std::endl;
 }
+
 
 void Company::recruit(Params params)
 {
@@ -97,6 +115,7 @@ void Company::recruit(Params params)
     std::cout << EMPLOYEE_RECRUITED << std::endl;
 }
 
+
 void Company::leave(Params params)
 {
     std::string employee_id = params.at(0);
@@ -111,6 +130,7 @@ void Company::leave(Params params)
     current_staff_.erase(iter); // Employee still stays in all_staff_
     std::cout << EMPLOYEE_LEFT << std::endl;
 }
+
 
 void Company::add_skill(Params params)
 {
@@ -135,7 +155,7 @@ void Company::print_current_staff(Params)
 {
     if( current_staff_.empty() )
     {
-        std::cout << "None" << std::endl;
+        std::cout << NONE << std::endl;
         return;
     }
 
@@ -146,11 +166,13 @@ void Company::print_current_staff(Params)
     }
 }
 
+
 void Company::create_project(Params params)
 {
     const std::string& project_id = params.at(0);
 
-    // Checking if there already is or has been a project in company with the same name.
+    // Checking if there already is or has been a project in company with the
+    // same name.
     if (all_projects_.find(project_id) != all_projects_.end())
     {
         std::cout << ALREADY_EXISTS << project_id << std::endl;
@@ -171,7 +193,6 @@ void Company::create_project(Params params)
     current_projects_.insert({project_id, new_project});
     std::cout << PROJECT_CREATED << std::endl;
 
-
 }
 
 
@@ -179,37 +200,45 @@ void Company::close_project(Params params)
 {
     std::string project_id = params.at(0);
 
+    // Checks if the project exists
     if (all_projects_.find(project_id) == all_projects_.end())
     {
         std::cout << CANT_FIND << project_id << std::endl;
         return;
     }
 
-    Project* project_to_close = all_projects_[project_id];
+    Project* project_to_close = nullptr;
+    project_to_close = all_projects_[project_id];
 
-    if (project_to_close->is_closed()) {
+    // If the project is already closed
+    if (project_to_close->is_closed())
+    {
         std::cout << PROJECT_CLOSED << std::endl;
         return;
     }
 
 
+    // Set the ending date and close the project
     project_to_close->set_end_date_for_assigned_staff(Utils::today);
-
     project_to_close->close_project(Utils::today);
     current_projects_.erase(project_id);
+
     std::cout << PROJECT_CLOSED << std::endl;
 }
 
 
 void Company::print_projects(Params)
 {
+    // If there are no projects
     if( all_projects_in_order_.empty() )
     {
-        std::cout << "None" << std::endl;
+        std::cout << NONE << std::endl;
         return;
     }
 
-    for(Project* project : all_projects_in_order_) {
+    // Print the projects and their info
+    for (Project* project : all_projects_in_order_)
+    {
         std::string id = project->get_id();
         project->print_date_info(id);
     }
@@ -217,75 +246,89 @@ void Company::print_projects(Params)
 }
 
 
-void Company::add_requirement(Params params) {
+void Company::add_requirement(Params params)
+{
     std::string project_id = params.at(0);
     std::string requirement = params.at(1);
 
+    // Checks if the project exists and is not closed
     if (!is_id_in_container(project_id, all_projects_) ||
-        !is_id_in_container(project_id, current_projects_)) {
+        !is_id_in_container(project_id, current_projects_))
+    {
         return;
     }
 
-    Project* project = current_projects_.at(project_id);
+    Project* project = nullptr;
+    project = current_projects_.at(project_id);
 
-    // Tarkista, onko vaatimus jo olemassa
+    // Checks if the requirement already exists
     project->add_requirement(requirement);
-        std::cout << REQUIREMENT_ADDED << project_id << std::endl;
+    std::cout << REQUIREMENT_ADDED << project_id << std::endl;
 
 }
 
 
 
-void Company::assign(Params params) {
+void Company::assign(Params params)
+{
     std::string staff_id = params.at(0);
     std::string project_id = params.at(1);
 
     // Check if the staff is in the company
-    if (current_staff_.find(staff_id) == current_staff_.end()) {
+    if (current_staff_.find(staff_id) == current_staff_.end())
+    {
         std::cout << CANT_FIND << staff_id << std::endl;
         return;
     }
 
     // Check if the project exists
-    if (!is_id_in_container(project_id, all_projects_)) {
+    if (!is_id_in_container(project_id, all_projects_))
+    {
         return;
     }
 
     // Check if the project is closed
-    if (current_projects_.find(project_id) == current_projects_.end()) {
+    if (current_projects_.find(project_id) == current_projects_.end())
+    {
         std::cout << CANT_ASSIGN << staff_id << std::endl;
         return;
     }
 
-    Project* project = current_projects_.at(project_id);
+    Project* project = nullptr;
+    project = current_projects_.at(project_id);
 
-    // Get the employee object based on the ID
-    Employee* employee = get_employee_by_id(staff_id);
+    Employee* employee = nullptr;
+    employee = get_employee_by_id(staff_id);
 
     // Check if the employee is already assigned to the project
-    if (project->is_employee_in_project(staff_id)) {
+    if (project->is_employee_in_project(staff_id))
+    {
         std::cout << CANT_ASSIGN << staff_id << std::endl;
         return;
     }
-    if (!project->get_requirements().empty()) {
-            bool has_required_skill = false;
-            for (const auto& skill : employee->get_skills()) {
-                if (project->has_requirement(skill)) {
-                    has_required_skill = true;
-                    break;
-                }
-            }
-
-            if (!has_required_skill) {
-                std::cout << CANT_ASSIGN << staff_id << std::endl;
-                return;
+    if (!project->get_requirements().empty())
+    {
+        bool has_required_skill = false;
+        for (const auto& skill : employee->get_skills())
+        {
+            if (project->has_requirement(skill))
+            {
+                has_required_skill = true;
+                break;
             }
         }
+        if (!has_required_skill)
+        {
+            std::cout << CANT_ASSIGN << staff_id << std::endl;
+            return;
+        }
+    }
 
     // Assign staff to the project
     project->add_employee(employee);
     all_active_staff_.insert(staff_id);
 
+    // Initalize the starting date
     Date start_date;
     start_date = project->get_start_date();
 
@@ -295,88 +338,114 @@ void Company::assign(Params params) {
 }
 
 
-
 void Company::print_project_info(Params params)
 {
     std::string project_id = params.at(0);
 
-        if (all_projects_.find(project_id) == all_projects_.end())
+    // Checks if the project exists
+    if (all_projects_.find(project_id) == all_projects_.end())
+    {
+        std::cout << CANT_FIND << project_id << std::endl;
+        return;
+    }
+
+    Project* project = nullptr;
+    project = all_projects_.at(project_id);
+
+    project->print_date_info(project_id);
+    std::cout << "** Requirements: ";
+    const auto& requirements = project->get_requirements();
+
+    // If there is no requirements
+    if (requirements.empty())
+    {
+        std::cout << NONE<< std::endl;
+    }
+    else
+    {
+        for (size_t i = 0; i < requirements.size(); ++i)
         {
-            std::cout << CANT_FIND << project_id << std::endl;
-            return;
+            std::cout << requirements[i];
+            if (i != requirements.size() - 1)
+            {
+                std::cout << ", ";
+            }
         }
 
-        Project* project = all_projects_.at(project_id);
+        std::cout << std::endl;
+    }
 
-        project->print_date_info(project_id);
-        std::cout << "** Requirements: ";
-            const auto& requirements = project->get_requirements();
-            if (requirements.empty()) {
-                std::cout << "None" << std::endl;
-            } else {
-                for (size_t i = 0; i < requirements.size(); ++i) {
-                    std::cout << requirements[i];
-                    if (i != requirements.size() - 1) {
-                        std::cout << ", ";
-                    }
-                }
-                std::cout << std::endl;
+    std::cout << "** Staff: ";
+    const auto& staff = project->get_assigned_staff();
+
+    // If there is no staff
+    if (staff.empty())
+    {
+        std::cout << NONE << std::endl;
+    }
+    else
+    {
+        size_t count = 0;
+        for (const auto& employee : staff)
+        {
+            std::cout << employee->get_id();
+            if (++count < staff.size())
+            {
+                std::cout << ", ";
             }
+        }
 
-            std::cout << "** Staff: ";
-            const auto& staff = project->get_assigned_staff();
-            if (staff.empty()) {
-                std::cout << "None" << std::endl;
-            } else {
-                size_t count = 0;
-                for (const auto& employee : staff) {
-                    std::cout << employee->get_id();
-                    if (++count < staff.size()) {
-                        std::cout << ", ";
-                    }
-                }
-                std::cout << std::endl;
-            }
-
+        std::cout << std::endl;
+    }
 }
+
 
 void Company::print_employee_info(Params params)
 {
     std::string employee_id = params.at(0);
 
-    Employee* employee = get_employee_by_id(employee_id);
+    Employee* employee = nullptr;
+    employee = get_employee_by_id(employee_id);
 
-        if (employee == nullptr) {
-            std::cout << CANT_FIND << employee_id << std::endl;
-            return;
-        }
-
-        employee->print_skills();
-        employee->print_projects("Projects:");
-
-
-}
-
-void Company::print_active_staff(Params)
-{
-    if (all_active_staff_.empty()) {
-        std::cout << "None" << std::endl;
+    // If there is not the wanted employee
+    if (employee == nullptr)
+    {
+        std::cout << CANT_FIND << employee_id << std::endl;
         return;
     }
 
-    for (const auto& employee : all_active_staff_) {
+    employee->print_skills();
+    employee->print_projects();
+}
+
+
+void Company::print_active_staff(Params)
+{
+    // If there is no active staff
+    if (all_active_staff_.empty())
+    {
+        std::cout << NONE << std::endl;
+        return;
+    }
+
+    for (const auto& employee : all_active_staff_)
+    {
         std::cout << employee << std::endl;
     }
 }
 
+
 bool Company::is_id_in_container(const std::string& id,
                                     const std::map<std::string, Project*>
-                                    container) const
+                                                            container) const
 {
     if (container.find(id) == container.end())
     {
+        // If there is not the wanted id in the container
         std::cout << CANT_FIND << id << std::endl;
         return false;
     }
+
+    // If the id is found
     return true;
 }

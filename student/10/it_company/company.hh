@@ -5,9 +5,14 @@
  * Class for describing a company. Only a single object created from this
  * class. Implements all commands in IT company program.
  *
- * Note: Students need change this class to implement commands missing
- * in the template code.
+ * Program author:
+ * Name: Enna Augustin
+ * Student number: 50235634
+ * UserID: xxenau
+ * E-Mail: enna.augustin@tuni.fi
+ *
  * */
+
 #ifndef COMPANY_HH
 #define COMPANY_HH
 
@@ -49,12 +54,23 @@ public:
      */
     ~Company();
 
+
+    /**
+     * @brief Gets the employee by the id
+     * @param The employee id as a referenced string
+     * @return The employee object (if in current_staff_) or nullptr (if not in
+     *         current_staff_)
+     */
+    Employee* get_employee_by_id(const std::string& id);
+
+
     /**
      * @brief set_date
      * @param params, vector containing three numeric strings: dd, mm, yyyy
      * Sets a new value for the current date
      */
     void set_date(Params params);
+
 
     /**
      * @brief advance_date
@@ -63,6 +79,7 @@ public:
      */
     void advance_date(Params params);
 
+
     /**
      * @brief recruit
      * @param params, vector containing id string
@@ -70,12 +87,14 @@ public:
      */
     void recruit(Params params);
 
+
     /**
      * @brief leave
      * @param params, vector containing id string
      * Removes the employee (id) from the company (but not from their projects)
      */
     void leave(Params params);
+
 
     /**
      * @brief add_skill
@@ -85,12 +104,14 @@ public:
      */
     void add_skill(Params params);
 
+
     /**
      * @brief print_current_staff
      * @param params, an empty vector of strings
      * Prints the current staff in the company
      */
     void print_current_staff(Params);
+
 
     /**
      * @brief create_project
@@ -99,12 +120,14 @@ public:
      */
     void create_project(Params params);
 
+
     /**
      * @brief close_project
      * @param params, vector containing id string
      * Closes a project, i.e. sets today as its closing date
      */
     void close_project(Params params);
+
 
     /**
      * @brief print_projects
@@ -114,6 +137,7 @@ public:
      * from a closed project prints also end date
      */
     void print_projects(Params);
+
 
     /**
      * @brief add_requirement
@@ -125,6 +149,7 @@ public:
      */
     void add_requirement(Params params);
 
+
     /**
      * @brief assign
      * @param params, vector containing two strings: employee id and project id
@@ -132,6 +157,7 @@ public:
      * employee assigned, nothing happens
      */
     void assign(Params params);
+
 
     /**
      * @brief print_project_info
@@ -141,12 +167,14 @@ public:
      */
     void print_project_info(Params params);
 
+
     /**
      * @brief print_employee_info
      * @param params, vector containing id string
      * Prints an employee: skills and project, both current and closed ones
      */
     void print_employee_info(Params params);
+
 
     /**
      * @brief print_active_staff
@@ -155,9 +183,6 @@ public:
      * in a project
      */
     void print_active_staff(Params);
-
-    Employee* get_employee_by_id(const std::string& id);
-    void update_active_staff();
 
 
 
@@ -168,6 +193,7 @@ private:
     std::map<std::string, Employee*> current_staff_;
     std::map<std::string, Employee*> all_staff_;
 
+
     // All staff that works or has worked in a project
     std::set<std::string> all_active_staff_;
 
@@ -175,21 +201,25 @@ private:
     // A database to store the projects
     std::map<std::string, Project*> all_projects_;
 
+
     // A database to store the current projects
     std::map<std::string, Project*> current_projects_;
+
 
     // Container for all projects in chronological order.
     std::vector<Project*> all_projects_in_order_;
 
+
     // Private helper method to get project ids for a employee in this
     // company in alphabetical order. .first string is employee
     // name, .second is a set of projects names who have that employee.
-    std::map<std::string,std::set<std::string>>get_projects_per_employee() const;
+    std::map<std::string,std::set<std::string>>get_projects_per_employee()
+                                                                        const;
 
     // Private helper method to check if id is in given container. If id
     // is not found, method prints CANT_FIND
-    bool is_id_in_container(const std::string& id,
-                             const std::map<std::string, Project*> container) const;
+    bool is_id_in_container(const std::string& id, const std::map<std::string,
+                                                    Project*> container) const;
 
 };
 
