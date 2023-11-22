@@ -70,6 +70,9 @@ public:
      */
     void print() const;
 
+    std::string to_string() const;
+
+
     /**
      * @brief comparison operators
      */
@@ -83,6 +86,7 @@ private:
     unsigned int day_;
     unsigned int month_;
     unsigned int year_;
+
 
     /**
      * @brief is_leap_year

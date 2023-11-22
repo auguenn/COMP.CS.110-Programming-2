@@ -1,6 +1,7 @@
 #include "date.hh"
 #include "utils.hh"
 #include <iostream>
+#include <sstream>
 
 // Number of days in months
 unsigned int const MONTH_SIZES[12] = { 31, 28, 31, 30, 31, 30,
@@ -76,6 +77,12 @@ void Date::advance(unsigned int days)
         }
     }
 }
+
+std::string Date::to_string() const {
+        std::stringstream ss;
+        ss << day_ << "." << month_ << "." << year_;
+        return ss.str();
+    }
 
 void Date::print() const
 {

@@ -129,6 +129,8 @@ void Company::add_skill(Params params)
     std::cout << SKILL_ADDED << employee_id << std::endl;
 }
 
+
+
 void Company::print_current_staff(Params)
 {
     if( current_staff_.empty() )
@@ -190,6 +192,9 @@ void Company::close_project(Params params)
         return;
     }
 
+
+    project_to_close->set_end_date_for_assigned_staff(Utils::today);
+
     project_to_close->close_project(Utils::today);
     current_projects_.erase(project_id);
     std::cout << PROJECT_CLOSED << std::endl;
@@ -212,33 +217,34 @@ void Company::print_projects(Params)
 }
 
 
-void Company::add_requirement(Params params)
-{
+void Company::add_requirement(Params params) {
     std::string project_id = params.at(0);
     std::string requirement = params.at(1);
 
-    // Tarkista, onko projekti olemassa ja suljettu
-        if (!is_id_in_container(project_id, all_projects_) ||
-            !is_id_in_container(project_id, current_projects_)) {
-            return;
+    if (!is_id_in_container(project_id, all_projects_) ||
+        !is_id_in_container(project_id, current_projects_)) {
+        return;
+    }
+
+    Project* project = current_projects_.at(project_id);
+
+    // Tarkista, onko vaatimus jo olemassa
+    if (!project->add_requirement(requirement)) {
+        std::cout << REQUIREMENT_ADDED << project_id << std::endl;
+        return;
+    }
+
+    //std::vector<std::string> unqualified_employees = project->update_employees_qualification();
+
+    /*if (!unqualified_employees.empty()) {
+        for (const auto& employee : unqualified_employees) {
+            std::cout << NOT_QUALIFIED << employee << std::endl;
+            project->remove_employee(employee); // Lisää tämä funktio, jotta epäpätevät poistetaan
         }
-
-        Project* project = current_projects_.at(project_id);
-
-        // Tarkista, onko vaatimus jo olemassa
-        if (project->add_requirement(requirement)) {
-            std::cout << REQUIREMENT_ADDED << project_id << std::endl;
-
-            // Päivitä työntekijöiden pätevyys, jos projektiin on lisätty uusi vaatimus
-            std::vector<std::string> unqualified_employees = project->update_employees_qualification();
-            for (const auto& employee : unqualified_employees) {
-                std::cout << NOT_QUALIFIED << employee << std::endl;
-            }
-        } else {
-            std::cout << REQUIREMENT_ADDED << project_id << std::endl;
-        }
-
+    }*/
+    std::cout << REQUIREMENT_ADDED << project_id << std::endl;
 }
+
 
 
 void Company::assign(Params params) {
@@ -266,20 +272,28 @@ void Company::assign(Params params) {
     // Get the employee object based on the ID
     Employee* employee = get_employee_by_id(staff_id);
 
-    // Check if the employee is already assigned to the project
+    /* Check if the employee is already assigned to the project
     if (project->is_employee_in_project(staff_id)) {
         std::cout << CANT_ASSIGN << staff_id << std::endl;
         return;
     }
-    // Check if the employee has at least one required skill for the project
+    Check if the employee has at least one required skill for the project
       if (!project->is_employee_qualified(*employee)) {
           std::cout << CANT_ASSIGN << staff_id << std::endl;
           return;
-      }
+      }*/
 
     // Assign staff to the project
-    project->add_employee(*employee);
+    project->add_employee(employee);
     all_active_staff_.insert(staff_id);
+
+    Date start_date;
+    start_date = project->get_start_date();
+
+
+    employee->add_project(project_id, start_date);
+
+
 
     std::cout << STAFF_ASSIGNED << project_id << std::endl;
 }
@@ -320,7 +334,7 @@ void Company::print_project_info(Params params)
             } else {
                 size_t count = 0;
                 for (const auto& employee : staff) {
-                    std::cout << employee;
+                    std::cout << employee->get_id();
                     if (++count < staff.size()) {
                         std::cout << ", ";
                     }
@@ -332,8 +346,21 @@ void Company::print_project_info(Params params)
 
 void Company::print_employee_info(Params params)
 {
+    std::string employee_id = params.at(0);
+
+    Employee* employee = get_employee_by_id(employee_id);
+
+        if (employee == nullptr) {
+            std::cout << CANT_FIND << employee_id << std::endl;
+            return;
+        }
+
+        employee->print_skills();
+        employee->print_projects("Projects:");
+
 
 }
+
 void Company::print_active_staff(Params)
 {
     if (all_active_staff_.empty()) {

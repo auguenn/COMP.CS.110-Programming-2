@@ -167,17 +167,27 @@ private:
      */
     std::map<std::string, Employee*> current_staff_;
     std::map<std::string, Employee*> all_staff_;
+
+    // All staff that works or has worked in a project
     std::set<std::string> all_active_staff_;
 
-    // More attributes and private methods
+
     // A database to store the projects
     std::map<std::string, Project*> all_projects_;
+
+    // A database to store the current projects
     std::map<std::string, Project*> current_projects_;
 
-   // Container for all projects in chronological order.
+    // Container for all projects in chronological order.
     std::vector<Project*> all_projects_in_order_;
 
+    // Private helper method to get project ids for a employee in this
+    // company in alphabetical order. .first string is employee
+    // name, .second is a set of projects names who have that employee.
+    std::map<std::string,std::set<std::string>>get_projects_per_employee() const;
 
+    // Private helper method to check if id is in given container. If id
+    // is not found, method prints CANT_FIND
     bool is_id_in_container(const std::string& id,
                              const std::map<std::string, Project*> container) const;
 

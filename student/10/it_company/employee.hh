@@ -12,6 +12,9 @@
 #include "date.hh"
 #include <string>
 #include <set>
+#include <map>
+#include <vector>
+
 
 class Employee
 {
@@ -26,6 +29,8 @@ public:
      * @param id
      */
     Employee(const std::string& id);
+
+
 
     /**
      * @brief Employee constructor (not in use)
@@ -45,6 +50,7 @@ public:
      */
     std::string get_id() const;
 
+
     /**
      * @brief add_skill
      * @param skill (name)
@@ -59,6 +65,10 @@ public:
      */
     bool has_skill(const std::string& skill) const;
 
+    void remove_project(const std::string& name);
+
+    std::vector<std::string> get_projects() const;
+
     /**
      * @brief print_id
      * @param pre_text
@@ -72,6 +82,13 @@ public:
      * if the employee has no skills, prints "None"
      */
     void print_skills() const;
+
+    void add_project(const std::string& name,
+                        Date start);
+    void end_project(const std::string& name, Date end);
+
+    void print_projects(const std::string& pre_text) const;
+
 
     /**
      * @brief operator<
@@ -88,7 +105,16 @@ private:
      */
     std::string id_;               // Can be a name or any other identifier
     Date date_of_birth_;           // Not actually needed
+
     std::set<std::string> skills_; // IT skills
+
+    struct DateRange {
+        Date start_date;
+        Date end_date;
+    };
+
+    std::map<std::string, DateRange> projects_;
+
 };
 
 #endif // EMPLOYEE_HH

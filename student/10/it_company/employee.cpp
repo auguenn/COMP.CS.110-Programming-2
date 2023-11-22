@@ -32,6 +32,50 @@ void Employee::add_skill(const std::string& skill)
     skills_.insert(skill);
 }
 
+std::vector<std::string> Employee::get_projects() const
+{
+    std::vector<std::string> result;
+    for( std::map<std::string, DateRange>::const_iterator
+         iter = projects_.begin();
+         iter != projects_.end();
+         ++iter )
+    {
+        result.push_back(iter->first);
+    }
+    return result;
+}
+
+void Employee::add_project(const std::string& name,
+                          Date start)
+{
+    DateRange date;
+        date.start_date = start;
+        date.end_date = Date(); // Alustetaan päättöpäivämäärä tyhjäksi
+
+        if (projects_.find(name) != projects_.end()) {
+            projects_.at(name) = date;
+        } else {
+            projects_.insert({name, date});
+        }
+}
+
+void Employee::end_project(const std::string& name, Date end) {
+    if (projects_.find(name) != projects_.end()) {
+         projects_.at(name).end_date = end; // Päivitetään päättöpäivämäärä
+     } else {
+         DateRange date;
+         date.start_date = Date();
+         date.end_date = end;
+         projects_.insert({name, date});
+     }
+
+}
+
+void Employee::remove_project(const std::string& name)
+{
+    projects_.erase(name);
+}
+
 bool Employee::has_skill(const std::string &skill) const
 {
     for( std::string skill_item : skills_ )
@@ -70,6 +114,45 @@ void Employee::print_skills() const
     }
     std::cout << std::endl;
 }
+
+void Employee::print_projects(const std::string& pre_text) const {
+
+
+    if (projects_.empty()) {
+        std::cout << "Projects: None" << std::endl;
+        return;
+    }
+
+    std::cout << pre_text << std::endl;
+    for( std::map<std::string, DateRange>::const_iterator
+             iter = projects_.begin();
+             iter != projects_.end();
+             ++iter )
+
+        { std::string name = "";
+
+          name = iter->first;
+          DateRange dates = iter->second;
+          std::string start = dates.start_date.to_string();
+          std::string end = dates.end_date.to_string();
+
+          if (end == "0.0.0") {
+              std::cout << "** " << name << " : "
+                        << start << " - "
+                        << std::endl;
+          } else {
+              std::cout
+                        << "** " << name << " : "
+                        << start << " - "
+                        << end << std::endl;
+          }
+
+
+
+        }
+
+}
+
 
 bool Employee::operator<(const Employee &rhs) const
 {
