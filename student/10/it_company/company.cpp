@@ -290,6 +290,20 @@ void Company::assign(Params params) {
         std::cout << CANT_ASSIGN << staff_id << std::endl;
         return;
     }
+    if (!project->get_requirements().empty()) {
+            bool has_required_skill = false;
+            for (const auto& skill : employee->get_skills()) {
+                if (project->has_requirement(skill)) {
+                    has_required_skill = true;
+                    break;
+                }
+            }
+
+            if (!has_required_skill) {
+                std::cout << CANT_ASSIGN << staff_id << std::endl;
+                return;
+            }
+        }
 
     // Assign staff to the project
     project->add_employee(employee);
@@ -298,10 +312,7 @@ void Company::assign(Params params) {
     Date start_date;
     start_date = project->get_start_date();
 
-
     employee->add_project(project_id, start_date);
-
-
 
     std::cout << STAFF_ASSIGNED << project_id << std::endl;
 }
