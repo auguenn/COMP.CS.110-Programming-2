@@ -28,14 +28,14 @@ void MainWindow::on_countButton_clicked()
 
     if (result < 18.5)
     {
-        ui->infoTextBrowser->setText(QString("You are underweight."));
+        ui->infoTextBrowser->setText(QString("Underweight"));
     }
     else if (result > 25.0)
     {
-        ui->infoTextBrowser->setText(QString("You are overweight."));
+        ui->infoTextBrowser->setText(QString("Overweight"));
     }
     else
     {
-        ui->infoTextBrowser->setText(QString("Your weight is normal."));
+        ui->infoTextBrowser->setText(QString("Normal range"));
     }
 }
