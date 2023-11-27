@@ -16,26 +16,30 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_countButton_clicked()
 {
-    int weight = std::stoi(ui->weightLineEdit->text().toStdString());
-    int height = std::stoi(ui->heightLineEdit->text().toStdString());
-    if (height == 0) {
-        ui->resultLabel->setText(QString("Cannot count."));
-        return;
-    }
-    double result = weight/((height/100.0)*(height/100.0));
+    QString weight = ui->weightLineEdit->text();
+      QString height = ui->heightLineEdit->text();
 
-    ui->resultLabel->setNum(result);
+      double w = weight.toDouble();
+      double h = height.toDouble();
+    if ( h > 0)
+      {
+      double bmi = w/(h*h*0.0001);
 
-    if (result < 18.5)
-    {
-        ui->infoTextBrowser->setText(QString("Underweight"));
-    }
-    else if (result > 25.0)
-    {
-        ui->infoTextBrowser->setText(QString("Overweight"));
-    }
-    else
-    {
-        ui->infoTextBrowser->setText(QString("Normal range"));
-    }
+      ui->resultLabel->setText(QString::number(bmi));
+
+      if (bmi >= 25){
+          ui->infoTextBrowser->setText("Overweight");
+        }
+
+      else if (bmi <= 18.5){
+          ui->infoTextBrowser->setText("Underweight");
+        }
+      else{
+          ui->infoTextBrowser->setText("Normal range");
+        }
+      }
+    else{
+        ui->resultLabel->setText("Cannot count");
+        ui->infoTextBrowser->setText("");
+      }
 }
