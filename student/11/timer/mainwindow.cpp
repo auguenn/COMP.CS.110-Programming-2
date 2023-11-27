@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(second_gone()));
     connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(on_stopButton_clicked()));
-    connect(ui->closeButton, &QPushButton::clicked, qApp, &QApplication::quit);
+
 }
 
 MainWindow::~MainWindow()
@@ -47,4 +47,9 @@ void MainWindow::on_resetButton_clicked()
   min_=0;
   ui->lcdNumberSec->display(sec_);
   ui->lcdNumberMin->display(min_);
+}
+
+void MainWindow::on_closeButton_clicked()
+{
+    close();
 }

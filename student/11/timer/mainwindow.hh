@@ -27,6 +27,7 @@ private slots:
     void second_gone();
     void on_stopButton_clicked();
     void on_resetButton_clicked();
+    void on_closeButton_clicked();
 
 private:
     Ui::MainWindow *ui;
