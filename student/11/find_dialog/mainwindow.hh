@@ -18,18 +18,17 @@ public:
 private slots:
     void on_findPushButton_clicked();
 
-    void on_fileLineEdit_textChanged(const QString &arg1);
-
-    void on_keyLineEdit_textChanged(const QString &arg1);
-
-    void on_matchCheckBox_stateChanged(int arg1);
-
 
 private:
     Ui::MainWindow *ui;
 
-    std::string fileName = "";
-    std::string wordToFind = "";
-    int matchCase = 0;
+    std::string fileName;
+    std::string wordToFind;
+    int matchCase;
+
+    const QString FILE_NOT_FOUND = "File not found";
+    const QString FILE_FOUND = "File found";
+    const QString WORD_NOT_FOUND ="Word not found";
+    const QString WORD_FOUND = "Word found";
 };
 #endif // MAINWINDOW_HH

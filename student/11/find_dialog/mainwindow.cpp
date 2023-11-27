@@ -1,89 +1,64 @@
 #include "mainwindow.hh"
 #include "ui_mainwindow.h"
+#include <string>
+#include <QFile>
 #include <QDebug>
-#include <iostream>
-#include <fstream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    //connect signals to slots
+        connect(ui->closePushButton, &QPushButton::clicked, this, &MainWindow::close);
+        connect(ui->findPushButton, &QPushButton::clicked, this, &MainWindow::on_findPushButton_clicked);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-std::string string_toupper(std::string input) {
-    std::string output = "";
-    for (std::string::size_type i = 0; i < input.length(); ++i) {
-        // append the to lower converted letter to output string
-        output += toupper(input.at(i));
-    }
-    // return lowercase string
-    return output;
-}
-
-
 void MainWindow::on_findPushButton_clicked()
 {
-
-
-    // check if file exists
-      std::ifstream fileToSearch(fileName);
-      QString result = "";
-
-      if (not fileToSearch) {
-          result = "File not found";
-      } else {
-          result = "File found";
-
-          // check if word is not empty
-          if (wordToFind != "") {
-              result = "Word not found";
-
-              // search file for word
-              if (matchCase == 2) {
-                  wordToFind = string_toupper(wordToFind);
-              }
-
-              // set to lowercase if matchCase
-              std::string row;
-              while (std::getline(fileToSearch, row)) {
-                  if (matchCase == 2) {
-                      row = string_toupper(row);
-                  }
-
-                  if (row.find(wordToFind) != std::string::npos) {
-                      result = "Word found";
-                      break;
-                  }
-              }
-          }
-      }
-      // set textBrowser status
-      ui->textBrowser->clear();
-      ui->textBrowser->setText(result);
+    if(!QFile::exists(ui->fileLineEdit->text())){
+        ui->textBrowser->setText(FILE_NOT_FOUND);
+    }
+    else if (QFile::exists(ui->fileLineEdit->text())){
+        QFile file(ui->fileLineEdit->text());
+        file.open(QIODevice::ReadWrite);
+        if (ui->matchCheckBox->isChecked()){
+            if(ui->keyLineEdit->text().isEmpty()){
+                ui->textBrowser->setText(FILE_FOUND);
+            }else{
+                QTextStream in(&file);
+                QString searchString(ui->keyLineEdit->text());
+                while (!in.atEnd()) {
+                        QString line = in.readLine();
+                        if (line.contains(searchString, Qt::CaseSensitive)){
+                            ui->textBrowser->setText(WORD_FOUND);
+                            return;
+                        }
+                }
+                ui->textBrowser->setText(WORD_NOT_FOUND);
+            }
+        }else{
+            if(ui->keyLineEdit->text().isEmpty()){
+                ui->textBrowser->setText(FILE_FOUND);
+            }else{
+                QTextStream in(&file);
+                QString searchString(ui->keyLineEdit->text());
+                while (!in.atEnd()) {
+                        QString line = in.readLine();
+                        if (line.contains(searchString, Qt::CaseInsensitive)){
+                            ui->textBrowser->setText(WORD_FOUND);
+                            return;
+                        }
+                }
+            ui->textBrowser->setText(WORD_NOT_FOUND);
+            }
+        }
+    file.close();
+    }
 }
 
-void MainWindow::on_fileLineEdit_textChanged(const QString &arg1)
-{
-    // update filename
-    fileName = arg1.toStdString();
-}
-
-
-void MainWindow::on_keyLineEdit_textChanged(const QString &arg1)
-{
-    // update word to find
-    wordToFind = arg1.toStdString();
-}
-
-
-void MainWindow::on_matchCheckBox_stateChanged(int arg1)
-{
-    // update checkbox status
-    matchCase = arg1;
-}
